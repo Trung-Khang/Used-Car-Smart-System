@@ -231,10 +231,10 @@ Member 03 ─────┐
                     │  PostgreSQL   │   │   R Plumber   │
                     │   Database    │   │   Model API   │
                     └───────▲───────┘   └───────────────┘
-                            │                   │
-                            │ Batch Ingestion   │ Prediction
-                            │                   │
-                    ┌───────┴──────────┐        │
+                            │                    │
+                            │ Batch Ingestion    │ Prediction
+                            │                    │
+                    ┌───────┴──────────┐         │
                     │    MEMBER 03      │        │
                     │ Python Data       │        │
                     │ Pipeline          │        │
@@ -273,36 +273,6 @@ Member 03 ─────┐
 ### Mục tiêu
 
 Tạo nền móng kỹ thuật để toàn bộ hệ thống có thể bắt đầu phát triển.
-
-### Workflow
-
-```text
-Requirements
-     │
-     ▼
-SRS / Scope
-     │
-     ▼
-ERD + Database Design
-     │
-     ├───────────────────┐
-     ▼                   ▼
-Member 01            Member 02
-Backend Setup        Frontend Setup
-     │                   │
-     ▼                   ▼
-Spring Boot         ReactJS
-     │                   │
-     ▼                   ▼
-Entity / CRUD       Pages / Components
-     │                   │
-     └──────────┬────────┘
-                ▼
-        Basic API + Basic UI
-                │
-                ▼
-        BASIC RUNNABLE SYSTEM
-```
 
 ### Member 01 — Backend
 
@@ -454,50 +424,6 @@ docs/Testing/
 
 Đưa dữ liệu thị trường thực tế vào hệ thống và hoàn thiện chức năng tìm kiếm/lọc.
 
-### Workflow
-
-```text
-Public Data Sources
-       │
-       ▼
-Member 03
-Python Crawler
-       │
-       ▼
-Raw Data
-       │
-       ▼
-Cleaning
-       │
-       ▼
-Validation
-       │
-       ▼
-Cleaned Dataset
-       │
-       ▼
-Batch Import
-       │
-       ▼
-PostgreSQL
-       │
-       ├──────────────────┐
-       ▼                  ▼
-Member 01             Member 02
-Backend Search        Frontend Feed
-       │                  │
-       ├── Search          ├── Vehicle Cards
-       ├── Filter          ├── Filter Panel
-       ├── Pagination      └── Vehicle Detail
-       └── Sorting
-       │
-       └──────────┬───────┘
-                  ▼
-          MARKET DATA SYSTEM
-```
-
----
-
 ### Member 03 — Trọng tâm chính
 
 ```text
@@ -584,53 +510,6 @@ Import Pipeline
 ## Mục tiêu
 
 Tích hợp mô hình Regression vào hệ thống để định giá xe tự động.
-
-### Workflow
-
-```text
-Vehicle Features
-      │
-      ▼
-Member 02
-Valuation Form
-      │
-      ▼
-Member 01
-Valuation API
-      │
-      ▼
-RModelClient
-      │
-      ▼
-Member 04
-R Plumber API
-      │
-      ▼
-Preprocessing
-      │
-      ▼
-Regression Model
-      │
-      ▼
-Predicted Price
-      │
-      ▼
-Member 01
-Smart Tagging
-      │
-      ├── GOOD_DEAL
-      ├── FAIR_PRICE
-      └── OVERPRICED
-      │
-      ▼
-PostgreSQL Prediction
-      │
-      ▼
-Member 02
-Valuation Result
-```
-
----
 
 ### Member 04 — Trọng tâm chính
 
@@ -724,42 +603,6 @@ R Plumber
 ## Mục tiêu
 
 Hoàn thiện hệ thống theo định hướng Decision Support System.
-
-### Workflow
-
-```text
-User Preferences
-      │
-      ▼
-Search + Filter
-      │
-      ▼
-Candidate Vehicles
-      │
-      ├───────────────────────┐
-      ▼                       ▼
-Recommendation           Comparison
-Member 05                Member 05
-      │                       │
-      ▼                       ▼
-Recommendation Score     Compare 2–3 Cars
-      │                       │
-      ▼                       ▼
-Ranking                  Compare Data
-      │                       │
-      └───────────┬───────────┘
-                  ▼
-           Spring Boot API
-                  │
-                  ▼
-             Member 02
-             React UI
-                  │
-                  ▼
-        FINAL DECISION SUPPORT
-```
-
----
 
 ### Member 05 — Trọng tâm chính
 
@@ -874,7 +717,7 @@ POSTGRESQL
 Member 01                     Member 04
 BACKEND                       R MODEL
       │                           │
-      │ API / Features             │ Prediction API
+      │ API / Features            │ Prediction API
       │                           │
       └─────────────┬─────────────┘
                     ▼
@@ -913,164 +756,8 @@ BACKEND                       R MODEL
 
 ---
 
-# 8. Quy tắc bàn giao giữa các thành viên
 
-## Member 03 → Member 05
-
-```text
-Crawler Output
-+
-Cleaned Dataset
-+
-Validation Result
-+
-Seed Dataset
-```
-
-## Member 05 → Member 01
-
-```text
-Database Schema
-+
-Table Structure
-+
-Relationships
-+
-Data Dictionary
-```
-
-## Member 01 → Member 02
-
-```text
-REST API
-+
-Request / Response DTO
-+
-Error Format
-+
-Pagination Format
-```
-
-## Member 04 → Member 01
-
-```text
-POST /predict
-+
-Input Schema
-+
-Output Schema
-+
-Model Version
-+
-Error Behavior
-```
-
-## Member 01 → Member 05
-
-```text
-Integrated Backend APIs
-+
-Search Data
-+
-Prediction Data
-+
-Vehicle Data
-```
-
-## Member 05 → Member 02
-
-```text
-Recommendation API Result
-+
-Comparison API Result
-+
-Expected UI Data Structure
-```
-
----
-
-# 9. Quy tắc làm việc chung
-
-## 9.1 Không làm việc cô lập
-
-Mỗi chức năng phải xác định:
-
-```text
-INPUT
-  ↓
-PROCESSING
-  ↓
-OUTPUT
-  ↓
-WHO CONSUMES OUTPUT?
-```
-
-Ví dụ:
-
-```text
-Member 04 tạo Prediction API
-        ↓
-Member 01 gọi API
-        ↓
-Backend lưu Prediction
-        ↓
-Member 02 hiển thị kết quả
-        ↓
-Member 05 sử dụng dữ liệu cho Recommendation
-```
-
----
-
-## 9.2 Trước khi code phải xác định vị trí trong project
-
-Ví dụ:
-
-```text
-Backend Feature
-→ backend/src/main/java/.../
-
-Frontend Feature
-→ frontend/src/.../
-
-Crawler Feature
-→ crawler/src/.../
-
-Model Feature
-→ model/...
-
-Database Feature
-→ database/...
-
-Documentation
-→ docs/...
-
-System Test
-→ tests/...
-```
-
----
-
-## 9.3 Definition of Done chung
-
-Một task chỉ được xem là hoàn thành khi:
-
-```text
-Code hoàn thành
-      +
-Build / Run được
-      +
-Đúng API / Schema
-      +
-Có kiểm thử phù hợp
-      +
-Không làm hỏng module khác
-      +
-Documentation cần thiết được cập nhật
-```
-
----
-
-# 10. Workflow cuối cùng của toàn hệ thống
+# 8. Workflow cuối cùng của toàn hệ thống
 
 ```text
                     MARKET DATA SOURCES
@@ -1132,62 +819,3 @@ Documentation cần thiết được cập nhật
 ```
 
 ---
-
-# 11. Kết luận workflow
-
-Toàn bộ dự án được vận hành theo chuỗi:
-
-```text
-DATA
- ↓
-DATABASE
- ↓
-BACKEND
- ↓
-MODEL
- ↓
-PREDICTION
- ↓
-SMART TAGGING
- ↓
-RECOMMENDATION / COMPARISON
- ↓
-FRONTEND
- ↓
-USER DECISION SUPPORT
-```
-
-Trong đó:
-
-```text
-Member 03
-    cung cấp DATA
-        ↓
-Member 05
-    quản lý DATABASE và Decision Support
-        ↓
-Member 01
-    kết nối và điều phối BACKEND
-        ↓
-Member 04
-    cung cấp MODEL / PREDICTION
-        ↓
-Member 02
-    biến toàn bộ chức năng thành USER EXPERIENCE
-```
-
-Workflow này phải được xem là **luồng tổng quát chung của đồ án**. Mỗi Increment chỉ là một giai đoạn mở rộng của workflow; các thành viên không nên hiểu rằng mình chỉ làm việc trong một giai đoạn duy nhất.
-
-Nguyên tắc chung là:
-
-```text
-Mỗi thành viên có module chính
-        +
-Có đầu vào phụ thuộc module khác
-        +
-Có đầu ra bàn giao cho module khác
-        +
-Có trách nhiệm hỗ trợ Integration ở Increment cuối
-```
-
-**Mục tiêu cuối cùng không phải là hoàn thành từng module riêng lẻ, mà là hoàn thành một hệ thống Decision Support System có thể chạy tích hợp từ Data → Database → Backend → Model → Recommendation → Frontend.**
