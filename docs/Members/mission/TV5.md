@@ -438,7 +438,56 @@ Frontend
 
 ---
 
-# 11. Bàn giao
+# 11. Nhiệm vụ bổ sung — Tổng hợp Báo cáo, Biểu đồ & Demo
+
+## 11.1. Tổng hợp Báo cáo cuối kỳ
+
+TV5 chịu trách nhiệm **tổng hợp và chuẩn hóa bản báo cáo cuối cùng**. TV5 không viết thay toàn bộ nhóm; mỗi thành viên phải bàn giao nội dung và minh chứng cho phần mình phụ trách.
+
+### Checklist
+- Nhận nội dung kỹ thuật từ TV1.
+- Nhận Activity Diagram và UI Evidence từ TV2.
+- Nhận Data Pipeline/Data Evidence từ TV3.
+- Nhận Model Metrics/Evaluation từ TV4.
+- Tổng hợp Database, Testing và System Design.
+- Đồng bộ thuật ngữ giữa các phần.
+- Kiểm tra các diagram khớp với hệ thống thực tế.
+- Chuẩn hóa format theo form của trường.
+- Xuất bản Word/PDF cuối cùng.
+
+### Input bắt buộc từ các thành viên
+
+**TV1**
+- Backend description.
+- Class Diagram.
+- Sequence/API documentation.
+
+**TV2**
+- Activity Diagram.
+- UI screenshots.
+- Frontend description.
+
+**TV3**
+- Data Pipeline description.
+- Dataset/cleaning evidence.
+
+**TV4**
+- Model description.
+- Metrics.
+- Evaluation charts/reports.
+
+**TV5**
+- ERD.
+- Database documentation.
+- Test Plan/Test Cases/Test Report.
+- Nội dung tổng hợp hệ thống.
+
+### Output
+- Chất liệu đã tổng hợp cho bài báo cáo đồ án.
+
+---
+
+# 12. Bàn giao
 
 ### TV1
 
@@ -494,7 +543,7 @@ docs/Testing/
 
 ---
 
-# 12. Tiêu chí nghiệm thu TV5
+# 13. Tiêu chí nghiệm thu TV5
 
 - ERD hoàn thành.
 - Database schema chạy được.
@@ -511,7 +560,7 @@ docs/Testing/
 
 ---
 
-# 13. Không làm ngoài phạm vi
+# 14. Không làm ngoài phạm vi
 
 Không xây:
 

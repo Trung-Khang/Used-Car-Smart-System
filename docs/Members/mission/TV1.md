@@ -63,6 +63,7 @@ backend/
 
 Cần cấu hình tối thiểu:
 
+- Tích hợp Swagger/OpenAPI vào Spring Boot Backend
 - Spring Web.
 - Spring Data JPA.
 - PostgreSQL Driver.
@@ -514,7 +515,71 @@ Spring Boot
 
 ---
 
-# 9. Tiêu chí nghiệm thu TV1
+# 9. Swagger / OpenAPI Documentation
+
+TV1 tích hợp Swagger/OpenAPI vào Spring Boot Backend.
+
+### Checklist
+- Cấu hình `springdoc-openapi`.
+- Hiển thị toàn bộ REST API trên Swagger UI.
+- Mô tả Request/Response DTO.
+- Khai báo validation và error response.
+- Cập nhật API documentation khi thay đổi endpoint.
+- Kiểm tra API test trực tiếp được trên Swagger UI.
+
+### API tối thiểu cần mô tả
+- Vehicle API.
+- Listing API.
+- Valuation API.
+- Recommendation API.
+- Comparison API.
+
+### Input
+- API requirements từ các Increment.
+- Database structure từ TV5.
+- Prediction contract từ TV4.
+
+### Output
+- Swagger/OpenAPI chạy cùng Backend.
+- API Specification trực quan cho TV2 và TV5.
+
+### Bàn giao
+- **TV2:** dùng Swagger để tích hợp ReactJS.
+- **TV5:** dùng Swagger/OpenAPI để xây dựng Test Cases.
+- **Cả nhóm:** dùng Swagger làm API contract chung.
+
+---
+
+# 10. Class Diagram
+
+TV1 chịu trách nhiệm chính vẽ Class Diagram dựa trên cấu trúc Backend thực tế.
+
+### Thời điểm thực hiện
+- Sau khi cấu trúc Backend và các module chính đã tương đối ổn định.
+
+### Checklist
+- Xác định các Entity chính.
+- Thể hiện quan hệ giữa Entity.
+- Thể hiện các lớp Service chính.
+- Thể hiện Repository chính (nếu cần phạm vi báo cáo).
+- Thể hiện DTO/Mapper ở mức phù hợp.
+- Đối chiếu lại với code trước khi chốt.
+- Xuất file ảnh/PDF phục vụ báo cáo.
+
+### Input
+- Source code Backend thực tế.
+- Database relationships từ TV5.
+
+### Output
+- Class Diagram khớp với kiến trúc Spring Boot hiện tại.
+
+### Bàn giao
+- **TV5:** nhận file diagram và nội dung mô tả để tổng hợp báo cáo.
+- **Cả nhóm:** dùng làm tài liệu UML chính thức.
+
+---
+
+# 11. Tiêu chí nghiệm thu TV1
 
 TV1 hoàn thành khi:
 
@@ -533,7 +598,7 @@ TV1 hoàn thành khi:
 
 ---
 
-# 10. Bàn giao cho ai?
+# 12. Bàn giao cho ai?
 
 ### Bàn giao cho TV2
 
@@ -583,8 +648,7 @@ docs/UML/Deployment_Diagram/
 ```
 
 ---
-
-# 11. Không làm ngoài phạm vi
+# 13. Không làm ngoài phạm vi
 
 TV1 không tự phát triển:
 

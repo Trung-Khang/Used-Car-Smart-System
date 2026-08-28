@@ -290,7 +290,58 @@ model validation
 
 ---
 
-# 9. Bàn giao
+# 9. Nhiệm vụ bổ sung — Scheduler / Cronjob (Tùy chọn)
+
+> **Mức độ ưu tiên: Tùy chọn.**
+>
+> Chỉ thực hiện sau khi Crawler, Cleaning, Validation và Seed/Import Pipeline đã chạy ổn định. **Không làm blocker cho chức năng cốt lõi.**
+
+## Mục tiêu
+
+Cho phép Data Pipeline được chạy định kỳ thay vì luôn phải chạy thủ công.
+
+### Checklist
+- Chốt script chạy toàn bộ pipeline.
+- Đảm bảo pipeline chạy độc lập từ command/script.
+- Bổ sung Scheduler hoặc Cronjob.
+- Cấu hình chu kỳ chạy thử nghiệm, ví dụ 1 tuần/lần.
+- Ghi log thời gian chạy.
+- Ghi log kết quả crawl/import.
+- Kiểm tra trường hợp pipeline lỗi.
+- Không tạo dữ liệu trùng lặp không kiểm soát.
+
+### Cách triển khai
+Chọn một trong các hướng:
+- Python `schedule`.
+- Crontab trên Linux.
+- Scheduler phù hợp với môi trường triển khai thực tế.
+
+Không cần triển khai nhiều cơ chế cùng lúc.
+
+### Input
+- `crawl_pipeline.py`.
+- `clean_pipeline.py`.
+- `import_pipeline.py`.
+- Database/import configuration đã ổn định.
+
+### Output
+- Script hoặc cấu hình Scheduler.
+- Log chạy pipeline.
+- Hướng dẫn chạy.
+
+### Bàn giao
+- **TV5:** nhận thông tin lịch chạy và dữ liệu được cập nhật.
+- **Cả nhóm:** nhận hướng dẫn vận hành pipeline.
+
+### Definition of Done
+- Pipeline vẫn chạy được thủ công.
+- Scheduler chỉ chạy khi được cấu hình.
+- Không ảnh hưởng chức năng Demo nếu Scheduler không chạy.
+- Có thể giải thích và trình diễn cơ chế tự động cập nhật dữ liệu.
+
+---
+
+# 10. Bàn giao
 
 ### TV4
 
@@ -332,7 +383,8 @@ Không cần code, nhưng phải cung cấp field/format hiển thị nếu có 
 
 ---
 
-# 10. Tiêu chí nghiệm thu TV3
+
+# 11. Tiêu chí nghiệm thu TV3
 
 - Có pipeline crawl.
 - Có parser.
@@ -347,8 +399,7 @@ Không cần code, nhưng phải cung cấp field/format hiển thị nếu có 
 - Có README hướng dẫn chạy pipeline.
 
 ---
-
-# 11. Không làm ngoài phạm vi
+# 12. Không làm ngoài phạm vi
 
 Không xây:
 

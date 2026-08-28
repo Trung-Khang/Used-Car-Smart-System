@@ -351,7 +351,70 @@ TV2 phối hợp TV1 và TV5 để bảo đảm Use Case khớp hệ thống th�
 
 ---
 
-# 9. Tiêu chí nghiệm thu TV2
+# 9. Nhiệm vụ bổ sung — Activity Diagram & Minh chứng giao diện
+
+## 9.1. Activity Diagram
+
+TV2 chịu trách nhiệm chính vẽ Activity Diagram cho các luồng nghiệp vụ có tương tác người dùng.
+
+### Luồng ưu tiên
+- Search / Filter Vehicle.
+- Vehicle Detail.
+- Automated Valuation.
+- Recommendation.
+- Comparison.
+
+Không bắt buộc vẽ tất cả nếu báo cáo không yêu cầu; ưu tiên các luồng chính dùng trong Demo.
+
+### Checklist
+- Xác định điểm bắt đầu của người dùng.
+- Thể hiện các bước xử lý chính.
+- Thể hiện các decision/condition quan trọng.
+- Thể hiện kết quả cuối cùng.
+- Đối chiếu với chức năng Frontend thực tế.
+- Đối chiếu API flow với TV1.
+- Xuất file ảnh/PDF phục vụ báo cáo.
+
+### Input
+- Luồng chức năng thực tế trên ReactJS.
+- API flow từ TV1.
+- Workflow nghiệp vụ chung của nhóm.
+
+### Output
+- Activity Diagram khớp với luồng hệ thống thực tế.
+
+### Bàn giao
+- **TV5:** nhận diagram và mô tả để tổng hợp Báo cáo cuối kỳ.
+
+## 9.2. Chuẩn bị UI Evidence cho Báo cáo và Slide
+
+Sau khi giao diện ổn định, TV2 chịu trách nhiệm chuẩn bị hình ảnh minh chứng cho phần trình bày.
+
+### Checklist
+- Chụp màn hình Home Page.
+- Chụp Vehicle List + Filter.
+- Chụp Vehicle Detail.
+- Chụp Valuation Form.
+- Chụp Valuation Result.
+- Chụp Recommendation.
+- Chụp Comparison.
+- Chọn ảnh giao diện rõ ràng, dữ liệu dễ đọc.
+- Đặt tên file ảnh thống nhất.
+
+### Input
+- Frontend đã tích hợp với Backend.
+- Dữ liệu Demo ổn định.
+
+### Output
+- Bộ ảnh giao diện phục vụ: Báo cáo, Slide, Demo.
+
+### Bàn giao
+- **TV5:** nhận bộ ảnh để tổng hợp Báo cáo và Slide.
+- **Cả nhóm:** dùng chung bộ UI Evidence khi chuẩn bị Demo.
+
+---
+
+# 10. Tiêu chí nghiệm thu TV2
 
 - React build/run thành công.
 - Home page hoạt động.
@@ -369,7 +432,7 @@ TV2 phối hợp TV1 và TV5 để bảo đảm Use Case khớp hệ thống th�
 
 ---
 
-# 10. Bàn giao
+# 11. Bàn giao
 
 ### TV1
 

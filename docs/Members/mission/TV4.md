@@ -352,7 +352,54 @@ Cần nêu rõ:
 
 ---
 
-# 10. Bàn giao
+# 10. Nhiệm vụ bổ sung — Model Metrics & Báo cáo ML
+
+## Mục tiêu
+
+Chuẩn bị kết quả đánh giá Model để phục vụ:
+- Báo cáo đồ án.
+- Slide.
+- Demo.
+- Phần giải thích Automated Pricing.
+
+## Checklist
+- Chốt Model Version sử dụng cho Demo.
+- Xuất các Metrics hiện có của Model.
+- Xuất kết quả đánh giá dưới dạng bảng.
+- Tạo biểu đồ minh họa nếu dữ liệu/evaluation hiện có hỗ trợ.
+- Lưu hình ảnh chất lượng đủ dùng cho Word/Slide.
+- Ghi rõ Dataset/Model Version tương ứng với Metrics.
+- Kiểm tra số liệu trong báo cáo khớp với kết quả chạy thực tế.
+
+### Metrics ưu tiên
+Sử dụng chỉ số thực tế mà pipeline đánh giá Model đã hỗ trợ, ví dụ:
+- R².
+- MAE.
+- RMSE.
+- MAPE nếu có.
+
+Không bắt buộc thêm chỉ số chỉ để làm đẹp báo cáo nếu Model hiện tại không đánh giá chúng.
+
+### Input
+- Training/Test Dataset.
+- Model Evaluation Result.
+- `regression_v*.rds`.
+- Metrics từ quá trình đánh giá.
+
+### Output
+- Metrics table.
+- Model evaluation report.
+- Biểu đồ đánh giá phù hợp nếu có.
+- Model version chính thức dùng trong Demo.
+
+### Bàn giao
+- **TV5:** nhận Metrics, hình ảnh và nội dung mô tả ngắn để đưa vào Báo cáo/Slide.
+- **TV1:** nhận Model Version và Prediction Contract chính thức.
+- **Cả nhóm:** dùng chung một bộ số liệu khi trình bày.
+
+---
+
+# 11. Bàn giao
 
 ### TV3
 
@@ -401,7 +448,7 @@ prediction metadata
 
 ---
 
-# 11. Tiêu chí nghiệm thu TV4
+# 12. Tiêu chí nghiệm thu TV4
 
 - Model train được.
 - Có test/evaluation.
@@ -416,10 +463,9 @@ prediction metadata
 
 ---
 
-# 12. Không làm ngoài phạm vi
+# 13. Không làm ngoài phạm vi
 
 Không xây:
-
 - Spring Boot.
 - React.
 - Crawler.
