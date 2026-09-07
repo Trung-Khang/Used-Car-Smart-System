@@ -1,27 +1,55 @@
-import React, { useMemo } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { FaArrowLeft } from 'react-icons/fa';
 import VehicleInfo from '../components/vehicle/VehicleInfo';
+import Loading from '../components/common/Loading';
 import ErrorMessage from '../components/common/ErrorMessage';
-import { MOCK_VEHICLES } from '../utils/mockVehicles';
+import vehicleApi from '../services/vehicleApi';
 import './VehicleDetailPage.css';
 
 const VehicleDetailPage = () => {
   const { id } = useParams();
+  const [vehicle, setVehicle] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Tìm xe theo ID (hỗ trợ cả kiểu number lẫn string)
-  const vehicle = useMemo(() => {
-    return MOCK_VEHICLES.find((v) => String(v.id) === String(id));
+  const fetchVehicleDetail = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const data = await vehicleApi.getVehicleById(id);
+      setVehicle(data);
+    } catch (err) {
+      setError(err.message || `Không thể tải thông tin xe #${id}. Vui lòng thử lại sau.`);
+    } finally {
+      setIsLoading(false);
+    }
   }, [id]);
 
-  if (!vehicle) {
+  useEffect(() => {
+    fetchVehicleDetail();
+  }, [fetchVehicleDetail]);
+
+  if (isLoading) {
+    return (
+      <div className="vehicle-detail-page">
+        <Link to="/vehicles" className="btn btn-secondary back-btn">
+          <FaArrowLeft /> Quay lại danh sách xe
+        </Link>
+        <Loading message={`Đang tải thông tin xe #${id}...`} />
+      </div>
+    );
+  }
+
+  if (error || !vehicle) {
     return (
       <div className="vehicle-detail-page">
         <Link to="/vehicles" className="btn btn-secondary back-btn">
           <FaArrowLeft /> Quay lại danh sách xe
         </Link>
         <ErrorMessage
-          message={`Không tìm thấy thông tin cho xe mã #${id}. Xe có thể đã được gỡ hoặc liên kết không tồn tại.`}
+          message={error || `Không tìm thấy thông tin cho xe mã #${id}.`}
+          onRetry={fetchVehicleDetail}
         />
       </div>
     );

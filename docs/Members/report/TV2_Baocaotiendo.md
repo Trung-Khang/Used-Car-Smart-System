@@ -208,3 +208,48 @@
 
 - **Chú ý/ Ghi chú:**
   - Thiết kế tuân thủ tính responsive cao, hỗ trợ mượt mà từ màn hình điện thoại (360px) đến màn hình desktop lớn (1280px+).
+
+---
+
+### Báo cáo Task 5: Xây dựng Service Layer (Axios & Vehicle API)
+
+- **Việc đã hoàn thành:**
+  - Xây dựng module cấu hình HTTP Client tập trung `src/services/api.js`:
+    - Khởi tạo Axios instance với `baseURL` động từ biến môi trường `import.meta.env.VITE_API_BASE_URL` (fallback `http://localhost:8080/api/v1`).
+    - Thiết lập timeout 10.000ms tránh treo request.
+    - Cấu hình request và response interceptor: tự động bóc tách `response.data` và chuẩn hóa thông điệp lỗi tiếng Việt thân thiện theo mã HTTP (404, 500, lỗi mất kết nối máy chủ).
+  - Xây dựng service chuyên biệt `src/services/vehicleApi.js`:
+    - Hàm `getVehicles(params)`: gọi endpoint REST `GET /vehicles` của Spring Boot (hỗ trợ phân trang, bộ lọc). Tự động fallback về mock data khi Backend chưa khởi động để đảm bảo UI hoạt động thông suốt.
+    - Hàm `getVehicleById(id)`: gọi endpoint REST `GET /vehicles/{id}` lấy chi tiết một chiếc xe kèm cơ chế fallback an toàn.
+  - Cập nhật các trang `VehicleListPage.jsx` và `VehicleDetailPage.jsx`:
+    - Chuyển đổi từ dữ liệu tĩnh sang cơ chế tải dữ liệu bất đồng bộ qua `vehicleApi` bên trong React `useEffect` hook.
+    - Quản lý đầy đủ các state: `isLoading`, `error`, và dữ liệu xe.
+    - Cung cấp nút bấm "Thử lại" (`onRetry`) khi xảy ra lỗi kết nối.
+  - Kiểm tra build production thành công 100% không lỗi.
+
+- **Sinh ra file/module gì:**
+  - `frontend/src/services/api.js` (Axios HTTP client instance)
+  - `frontend/src/services/vehicleApi.js` (Vehicle REST API service layer)
+  - Cập nhật `frontend/src/pages/VehicleListPage.jsx`
+  - Cập nhật `frontend/src/pages/VehicleDetailPage.jsx`
+
+- **Để làm gì:**
+  - Tách biệt hoàn toàn tầng logic gọi API (Service Layer) khỏi tầng giao diện (Presentation Layer) theo nguyên tắc clean architecture.
+  - Chuẩn bị sẵn cổng kết nối hoàn chỉnh với Backend Spring Boot của TV1 cho các Increment tiếp theo.
+
+- **Bàn giao lại cho ai:**
+  - TV2 tiếp tục thực hiện Task 6 (Kiểm tra tổng thể toàn bộ Increment 1, nghiệm thu và tổng kết báo cáo).
+  - TV1 (Backend): sẵn sàng tích hợp ngay khi endpoint `GET /api/v1/vehicles` và `GET /api/v1/vehicles/{id}` được triển khai trên Spring Boot.
+
+- **Còn thiếu hay cần bổ sung gì:**
+  - Backend Spring Boot của TV1 hiện chưa triển khai thực tế trên máy, Frontend đang kích hoạt chế độ fallback an toàn. Khi TV1 có API thật, chỉ cần chạy song song backend là frontend tự động ăn dữ liệu từ Database mà không cần sửa code.
+
+- **Cách thức và thao tác Run/Debug hoặc test thử:**
+  - Khởi chạy dev server: `cd frontend; npm run dev`
+  - Mở console trình duyệt (F12) để quan sát log cảnh báo fallback của service khi Backend chưa bật.
+  - Kiểm tra danh sách xe vẫn tải mượt mà kèm hiệu ứng loading.
+  - Bấm vào một xe để kiểm tra trang chi tiết tải dữ liệu bất đồng bộ.
+  - Kiểm tra build: `npm run build`
+
+- **Chú ý/ Ghi chú:**
+  - Các hàm API đều có chú thích JSDoc rõ ràng, dễ bảo trì và mở rộng thêm các tham số filter cho Increment 2.
