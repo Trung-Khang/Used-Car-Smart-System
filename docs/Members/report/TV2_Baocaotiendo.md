@@ -99,3 +99,51 @@
 
 - **Chú ý/ Ghi chú:**
   - Các thư mục dành cho Increment 2, 3, 4 đã được tạo sẵn file `.gitkeep` để duy trì track trên Git.
+
+---
+
+### Báo cáo Task 3: Layout chung & Cấu hình Điều hướng (Router)
+
+- **Việc đã hoàn thành:**
+  - Xây dựng hệ thống stylesheet toàn cục `src/styles/global.css` chứa CSS variables (bảng màu, spacing, font, shadows), reset CSS và các class tiện ích dùng chung (`.btn`, `.btn-primary`, `.main-content`).
+  - Xây dựng component `Navbar` (`src/components/common/Navbar.jsx` & `Navbar.css`): hiển thị logo xe thông minh, tiêu đề hệ thống, các navigation links với hiệu ứng active, badge đánh dấu các chức năng của Increment tương lai (Inc 3, Inc 4), hỗ trợ responsive menu toggle cho mobile/tablet.
+  - Xây dựng component `Footer` (`src/components/common/Footer.jsx` & `Footer.css`): hiển thị thông tin đồ án chuyên ngành, HCMUTE, phân công 5 thành viên của nhóm và copyright.
+  - Xây dựng component `Loading` (`src/components/common/Loading.jsx` & `Loading.css`): spinner xoay kèm thông báo tùy biến qua props `message`.
+  - Xây dựng component `ErrorMessage` (`src/components/common/ErrorMessage.jsx` & `ErrorMessage.css`): thẻ hiển thị lỗi trực quan kèm icon cảnh báo và nút callback `onRetry`.
+  - Khởi tạo 3 trang cơ bản `HomePage.jsx`, `VehicleListPage.jsx`, `VehicleDetailPage.jsx` làm placeholder cho các route.
+  - Tích hợp React Router trong `src/App.jsx` với các route:
+    - `/` → HomePage
+    - `/vehicles` → VehicleListPage
+    - `/vehicles/:id` → VehicleDetailPage
+  - Kiểm tra build thành công 100% không có cảnh báo hay lỗi cú pháp.
+
+- **Sinh ra file/module gì:**
+  - `frontend/src/styles/global.css`
+  - `frontend/src/components/common/Navbar.jsx` & `Navbar.css`
+  - `frontend/src/components/common/Footer.jsx` & `Footer.css`
+  - `frontend/src/components/common/Loading.jsx` & `Loading.css`
+  - `frontend/src/components/common/ErrorMessage.jsx` & `ErrorMessage.css`
+  - `frontend/src/pages/HomePage.jsx`
+  - `frontend/src/pages/VehicleListPage.jsx`
+  - `frontend/src/pages/VehicleDetailPage.jsx`
+  - `frontend/src/App.jsx` (cập nhật router & layout wrapper)
+
+- **Để làm gì:**
+  - Định hình khung giao diện (Shell/Layout) cố định và nhất quán cho toàn bộ ứng dụng.
+  - Cung cấp sẵn cơ chế điều hướng trang mượt mà (SPA Routing) và các trạng thái nạp dữ liệu / báo lỗi tiêu chuẩn để sử dụng xuyên suốt các Increment.
+
+- **Bàn giao lại cho ai:**
+  - TV2 tiếp tục thực hiện Task 4 (Xây dựng Vehicle UI Components: VehicleCard, VehicleGrid, VehicleInfo, Formatter và các trang hoàn chỉnh).
+
+- **Còn thiếu hay cần bổ sung gì:**
+  - Các trang `VehicleListPage` và `VehicleDetailPage` hiện chỉ là placeholder, cần xây dựng bộ components hiển thị thông tin xe chi tiết và gắn mock data (Sẽ làm ở Task 4).
+
+- **Cách thức và thao tác Run/Debug hoặc test thử:**
+  - Khởi chạy dev server: `cd frontend; npm run dev`
+  - Mở trình duyệt tại `http://localhost:5173/` để kiểm tra Navbar, Footer.
+  - Bấm vào menu "Danh sách xe" để chuyển route sang `/vehicles`.
+  - Thử nghiệm trên DevTools ở các kích thước màn hình Mobile/Tablet/Desktop.
+  - Kiểm tra build: `npm run build`
+
+- **Chú ý/ Ghi chú:**
+  - Đã tích hợp các icon vector từ thư viện `react-icons/fa` tối ưu hiệu năng và thẩm mỹ.
