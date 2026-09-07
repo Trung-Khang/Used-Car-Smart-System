@@ -253,3 +253,49 @@
 
 - **Chú ý/ Ghi chú:**
   - Các hàm API đều có chú thích JSDoc rõ ràng, dễ bảo trì và mở rộng thêm các tham số filter cho Increment 2.
+
+---
+
+### Báo cáo Task 6: Kiểm tra tổng thể & Nghiệm thu Increment 1 (Foundation)
+
+- **Việc đã hoàn thành:**
+  - Thực hiện kiểm thử tích hợp toàn bộ các trang và component của Frontend:
+    - [x] Chạy lệnh `npm run build` thành công, không sinh ra bất kỳ warning hay lỗi bundle.
+    - [x] Kiểm tra route `/` (HomePage): hiển thị Hero banner, 3 khối tính năng chính, 4 xe nổi bật (Featured Vehicles) có link dẫn sang chi tiết.
+    - [x] Kiểm tra route `/vehicles` (VehicleListPage): hiển thị tổng số xe và lưới danh sách xe `VehicleGrid` nạp qua service bất đồng bộ.
+    - [x] Kiểm tra route `/vehicles/:id` (VehicleDetailPage): nạp thông tin xe theo ID, breadcrumb điều hướng, bảng thông số kỹ thuật chi tiết, mô tả và liên kết nguồn tin rao.
+    - [x] Kiểm tra trường hợp ID không tồn tại (vd: `/vehicles/999`): hiển thị `ErrorMessage` và nút quay lại danh sách thân thiện.
+    - [x] Kiểm tra thanh điều hướng `Navbar`: chuyển trang SPA mượt mà không reload, có menu toggle trên màn hình di động.
+    - [x] Kiểm tra tính Responsive trên Chrome DevTools ở các mốc: 375px (Mobile), 768px (Tablet), 1024px (Laptop), 1280px+ (Desktop).
+    - [x] File `.env.example` và `.env` được cấu hình chuẩn mực, không lộ secret.
+  - Hoàn tất 100% mục tiêu của **Increment 1 — Foundation** được giao cho Thành viên 02 (TV2).
+
+- **Sinh ra file/module gì:**
+  - Bộ mã nguồn hoàn chỉnh của ứng dụng Frontend trong thư mục `frontend/src/`:
+    - 5 Components dùng chung: `Navbar`, `Footer`, `Loading`, `ErrorMessage`, `App.jsx`.
+    - 3 Components xe chuyên biệt: `VehicleCard`, `VehicleGrid`, `VehicleInfo`.
+    - 3 Trang hoàn chỉnh: `HomePage`, `VehicleListPage`, `VehicleDetailPage`.
+    - 2 Service kết nối mạng: `api.js`, `vehicleApi.js`.
+    - 2 Utility xử lý dữ liệu: `formatters.js`, `mockVehicles.js`.
+    - Cấu hình dự án: `package.json`, `vite.config.js`, `index.html`, `.env.example`.
+
+- **Để làm gì:**
+  - Đóng gói trọn vẹn Increment 1 (Foundation) tạo nền tảng vững chắc để chuyển giao và phối hợp với các thành viên khác ở Increment 2.
+
+- **Bàn giao lại cho ai:**
+  - **TV5 (Testing Lead):** bàn giao mã nguồn Frontend và quy trình chạy thử để thực hiện kiểm thử nghiệm thu Increment 1.
+  - **TV1 (Backend):** bàn giao API contract (`GET /api/v1/vehicles`, `GET /api/v1/vehicles/{id}`) để Backend hoàn tất endpoint tương ứng.
+  - **Toàn nhóm:** sẵn sàng bước vào Increment 2 — Market Data (Xây dựng FilterPanel, PriceFilter, YearFilter, Pagination, Sorting).
+
+- **Còn thiếu hay cần bổ sung gì:**
+  - Không còn thiếu sót nào thuộc phạm vi Increment 1.
+  - Các tính năng nâng cao (Bộ lọc tìm kiếm, Phân trang server-side) thuộc phạm vi của Increment 2 sẽ được thực hiện khi chuyển sang Increment 2.
+
+- **Cách thức và thao tác Run/Debug hoặc test thử:**
+  1. `cd frontend`
+  2. `npm install` (nếu clone máy mới)
+  3. `npm run dev` → Mở `http://localhost:5173` trên trình duyệt.
+  4. Trải nghiệm luồng điều hướng: Trang chủ → Xem danh sách xe → Bấm xem chi tiết từng xe.
+
+- **Chú ý/ Ghi chú:**
+  - Tất cả mã nguồn tuân thủ tiêu chuẩn code sạch (Clean Code), đặt tên biến/hàm nhất quán và có CSS chuyên biệt theo từng component.
