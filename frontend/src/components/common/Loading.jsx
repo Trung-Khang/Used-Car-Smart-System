@@ -11,3 +11,4 @@ const Loading = ({ message = 'Đang tải dữ liệu...' }) => {
 };
 
 export default Loading;
+

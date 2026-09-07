@@ -147,3 +147,64 @@
 
 - **Chú ý/ Ghi chú:**
   - Đã tích hợp các icon vector từ thư viện `react-icons/fa` tối ưu hiệu năng và thẩm mỹ.
+
+---
+
+### Báo cáo Task 4: Vehicle UI Components & Các Trang Chức Năng Hoàn Chỉnh
+
+- **Việc đã hoàn thành:**
+  - Xây dựng module tiện ích định dạng dữ liệu `src/utils/formatters.js`:
+    - `formatPrice`: chuyển đổi số tiền VND sang dạng rút gọn (triệu / tỷ) dễ đọc trên giao diện thẻ xe.
+    - `formatFullPrice`: định dạng giá tiền chuẩn có phân tách hàng nghìn và ký hiệu ₫.
+    - `formatMileage`: định dạng số km đã đi kèm hậu tố "km".
+    - `formatYear`: hiển thị năm sản xuất xe.
+  - Xây dựng tập mock data thực tế `src/utils/mockVehicles.js` gồm 8 mẫu xe phổ biến tại Việt Nam (Toyota Vios, Mazda 3, Honda CR-V, Hyundai Accent, Kia Seltos, Ford Everest, Toyota Corolla Cross, Mitsubishi Xpander) với đầy đủ thông số kỹ thuật chuẩn schema.
+  - Xây dựng component `VehicleCard` (`src/components/vehicle/VehicleCard.jsx` & `VehicleCard.css`):
+    - Hiển thị hình ảnh xe kèm cơ chế fallback ảnh mặc định khi link lỗi.
+    - Badge năm sản xuất, hãng xe, tên dòng xe, phiên bản, giá tiền nổi bật màu đỏ.
+    - Lưới thông số tóm tắt: ODO (km), loại nhiên liệu, hộp số, địa điểm đăng bán.
+    - Hiệu ứng hover nổi khối (elevation) và liên kết điều hướng trực tiếp sang trang chi tiết `/vehicles/:id`.
+  - Xây dựng component `VehicleGrid` (`src/components/vehicle/VehicleGrid.jsx` & `VehicleGrid.css`):
+    - Layout CSS Grid responsive tự động thích ứng trên mọi độ phân giải màn hình.
+    - Xử lý đồng bộ các trạng thái: nạp dữ liệu (`Loading`), lỗi kết nối (`ErrorMessage`), hoặc không có dữ liệu (thẻ thông báo rỗng kèm icon).
+  - Xây dựng component `VehicleInfo` (`src/components/vehicle/VehicleInfo.jsx` & `VehicleInfo.css`):
+    - Trình bày chi tiết toàn diện thông số kỹ thuật (Năm sản xuất, ODO, Nhiên liệu, Hộp số, Kiểu dáng, Nơi bán).
+    - Khung mô tả chi tiết từ người bán và nút bấm mở tin đăng gốc sàn thương mại điện tử (`source_url`).
+  - Hoàn thiện 3 trang chính:
+    - `HomePage.jsx`: Hero banner giới thiệu hệ thống, 3 khối tính năng cốt lõi (Dữ liệu thực tế, Định giá tự động AI, Gợi ý & So sánh), và danh sách 4 xe nổi bật (Featured Vehicles).
+    - `VehicleListPage.jsx`: Danh sách xe đang có sẵn, badge tổng số lượng xe và lưới hiển thị `VehicleGrid`.
+    - `VehicleDetailPage.jsx`: Lấy `id` từ URL param, tìm kiếm xe, thanh breadcrumb điều hướng, nút quay lại và hiển thị `VehicleInfo` (có xử lý báo lỗi nếu mã xe không tồn tại).
+  - Kiểm tra build production thành công tuyệt đối (`npm run build`).
+
+- **Sinh ra file/module gì:**
+  - `frontend/src/utils/formatters.js`
+  - `frontend/src/utils/mockVehicles.js`
+  - `frontend/src/components/vehicle/VehicleCard.jsx` & `VehicleCard.css`
+  - `frontend/src/components/vehicle/VehicleGrid.jsx` & `VehicleGrid.css`
+  - `frontend/src/components/vehicle/VehicleInfo.jsx` & `VehicleInfo.css`
+  - `frontend/src/pages/HomePage.jsx` & `HomePage.css`
+  - `frontend/src/pages/VehicleListPage.jsx` & `VehicleListPage.css`
+  - `frontend/src/pages/VehicleDetailPage.jsx` & `VehicleDetailPage.css`
+
+- **Để làm gì:**
+  - Hoàn thành trọn vẹn lớp giao diện người dùng (UI) cho Increment 1 theo đúng nhiệm vụ phân công của TV2.
+  - Cung cấp trải nghiệm duyệt xe, xem chi tiết xe mượt mà, trực quan trước khi kết nối dữ liệu thật từ Backend.
+
+- **Bàn giao lại cho ai:**
+  - TV2 tiếp tục thực hiện Task 5 (Xây dựng Service Layer: `api.js` và `vehicleApi.js` để tích hợp REST API).
+  - TV1 (Backend): đối chiếu các trường dữ liệu xe trên UI (`price`, `mileage`, `manufacture_year`, `fuel_type`, `transmission`, `body_type`, `location`) để đồng bộ DTO.
+
+- **Còn thiếu hay cần bổ sung gì:**
+  - Dữ liệu hiện tại đang đọc từ `mockVehicles.js`, cần đóng gói qua service layer `vehicleApi` (Sẽ làm ở Task 5).
+  - Bộ lọc chi tiết (FilterPanel, PriceFilter, YearFilter) sẽ được phát triển chuyên sâu ở Increment 2.
+
+- **Cách thức và thao tác Run/Debug hoặc test thử:**
+  - Chạy dev server: `cd frontend; npm run dev`
+  - Truy cập `http://localhost:5173/` để xem HomePage và các xe nổi bật.
+  - Bấm "Xem danh sách xe" hoặc vào menu "Danh sách xe" để xem toàn bộ 8 xe mẫu.
+  - Bấm vào bất kỳ thẻ xe nào để kiểm tra trang chi tiết `/vehicles/:id`.
+  - Thử nhập URL không tồn tại như `/vehicles/999` để kiểm tra màn hình báo lỗi `ErrorMessage`.
+  - Kiểm tra build: `npm run build`
+
+- **Chú ý/ Ghi chú:**
+  - Thiết kế tuân thủ tính responsive cao, hỗ trợ mượt mà từ màn hình điện thoại (360px) đến màn hình desktop lớn (1280px+).

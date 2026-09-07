@@ -1,0 +1,22 @@
+.vehicle-detail-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.detail-navigation-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.back-btn {
+  font-size: 14px;
+}
+
+.breadcrumb-text {
+  font-size: 14px;
+  color: var(--text-muted);
+}
