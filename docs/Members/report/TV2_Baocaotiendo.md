@@ -42,3 +42,60 @@
 
 - **Chú ý/ Ghi chú:**
   - File `.env` chứa cấu hình local đã được đưa vào `.gitignore` để bảo mật, chỉ commit file `.env.example`.
+
+---
+
+### Báo cáo Task 2: Cấu trúc thư mục dự án
+
+- **Việc đã hoàn thành:**
+  - Chuẩn hóa toàn bộ kiến trúc thư mục nguồn theo tiêu chuẩn module React bên trong `frontend/src/`.
+  - Di chuyển và tổ chức các thư mục phân lớp (`pages`, `services`, `hooks`, `context`, `utils`, `styles`) vào trong `frontend/src/`.
+  - Thiết lập đầy đủ các phân khu component chuyên biệt:
+    - `components/common/`: components dùng chung cho toàn ứng dụng.
+    - `components/vehicle/`: components hiển thị thẻ xe, lưới xe, chi tiết xe (Inc 1).
+    - `components/filter/`: bộ lọc tìm kiếm (Inc 2).
+    - `components/valuation/`: form và kết quả định giá tự động (Inc 3).
+    - `components/recommendation/`: danh sách và thẻ xe đề xuất (Inc 4).
+    - `components/comparison/`: bảng và biểu đồ so sánh xe (Inc 4).
+  - Loại bỏ các file rác và boilerplate mặc định.
+
+- **Sinh ra file/module gì:**
+  - Cấu trúc cây thư mục chuẩn trong `frontend/src/`:
+    ```
+    frontend/src/
+    ├── assets/
+    │   ├── icons/
+    │   └── images/
+    ├── components/
+    │   ├── common/
+    │   ├── vehicle/
+    │   ├── filter/
+    │   ├── valuation/
+    │   ├── recommendation/
+    │   └── comparison/
+    ├── context/
+    ├── hooks/
+    ├── pages/
+    ├── services/
+    ├── styles/
+    ├── utils/
+    ├── App.jsx
+    └── main.jsx
+    ```
+
+- **Để làm gì:**
+  - Giúp dự án có cấu trúc rõ ràng, dễ mở rộng và tuân thủ nguyên tắc separation of concerns.
+  - Sẵn sàng triển khai các components layout (Navbar, Footer, Loading...) ở Task 3 và Vehicle UI ở Task 4.
+
+- **Bàn giao lại cho ai:**
+  - TV2 tiếp tục thực hiện Task 3 (Layout chung: Navbar, Footer, Loading, ErrorMessage, Router).
+
+- **Còn thiếu hay cần bổ sung gì:**
+  - Chưa triển khai code các component cụ thể trong `components/common` và routing trong `App.jsx` (Sẽ làm ở Task 3).
+
+- **Cách thức và thao tác Run/Debug hoặc test thử:**
+  - Kiểm tra cây thư mục: `Get-ChildItem -Recurse frontend/src`
+  - Build thử nghiệm: `cd frontend; npm run build`
+
+- **Chú ý/ Ghi chú:**
+  - Các thư mục dành cho Increment 2, 3, 4 đã được tạo sẵn file `.gitkeep` để duy trì track trên Git.
