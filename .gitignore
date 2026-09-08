@@ -39,6 +39,9 @@ venv/
 .RData
 .Ruserdata
 .Rproj.user/
+model/regression/models/*_fixture.rds
+model/regression/reports/metrics_fixture.csv
+model/regression/reports/model_evaluation_fixture.md
 
 # --- Crawler temporary data ---
 crawler/data/raw/

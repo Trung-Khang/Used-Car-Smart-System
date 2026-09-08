@@ -1,0 +1,5 @@
+model_version,dataset,metric,value,unit,n_train,n_test,generated_at,status
+regression_v1,TV3 cleaned dataset,R2,,ratio,,,waiting_for_data,not_available
+regression_v1,TV3 cleaned dataset,RMSE,,VND,,,waiting_for_data,not_available
+regression_v1,TV3 cleaned dataset,MAE,,VND,,,waiting_for_data,not_available
+regression_v1,TV3 cleaned dataset,MAPE,,percent,,,waiting_for_data,not_available
