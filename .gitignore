@@ -43,6 +43,7 @@ venv/
 # --- Crawler temporary data ---
 crawler/data/raw/
 crawler/data/tmp/
+crawler/data/merged/
 crawler/logs/
 
 # --- Database backups / local data ---
