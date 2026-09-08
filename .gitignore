@@ -44,6 +44,9 @@ venv/
 crawler/data/raw/
 crawler/data/tmp/
 crawler/data/merged/
+crawler/data/cleaned/
+crawler/data/seed/
+crawler/data/quality_report/
 crawler/logs/
 
 # --- Database backups / local data ---
