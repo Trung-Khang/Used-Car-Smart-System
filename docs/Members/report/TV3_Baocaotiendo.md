@@ -1104,3 +1104,93 @@ TV3 dừng tại **Database Handoff** vì database schema và physical database 
 > **Quality: 98.41/100 — Grade A.**
 > **Seed: READY.**
 > **Next owner: Database member / TV5 for schema deployment and physical import.**
+
+---
+
+# 31. TV4 Compatibility & Dataset Enrichment
+
+## 31.1. TV4 Feedback
+TV4 đề xuất bổ sung các đặc trưng phục vụ mô hình Regression: `origin`, `engine_size`, `seat_count` và `listed_year`. Hai bên thống nhất:
+* `listed_year = int(crawled_at[:4])` suy diễn được trực tiếp từ `crawled_at`, không thêm cột dư thừa vào schema chuẩn.
+* `origin`, `engine_size`, `seat_count` được làm giàu trực tiếp từ detail page của nguồn gốc.
+
+## 31.2. TV3 Action
+* Xây dựng pipeline `crawler/src/pipeline/enrich_pipeline.py` với multi-threading, checkpointing và retry.
+* Bổ sung chuẩn hóa transmission (`Automatic`, `Manual`, `CVT`; 21 `Semi-Automatic` và 1 `Other` chuyển về `null`).
+* Chuẩn hóa fuel_type (`Gasoline`, `Diesel`, `Electric`, `Hybrid`; giá trị dị biệt `Loại khác  2.5 L` chuyển về `null`).
+* Xuất CSV bằng chuẩn `utf-8-sig` (UTF-8 có BOM) để khắc phục triệt để lỗi font tiếng Việt trong R và PowerShell.
+
+## 31.3. Bảng khả dụng thuộc tính (17 fields)
+
+| Thuộc tính | Nguồn | Kiểu dữ liệu | Quy tắc missing | Độ đầy đủ | Tình trạng TV4 |
+|---|---|---|---|---|---|
+| `brand` | Listing | String | Bắt buộc | 10,813 (100.0%) | Khả dụng |
+| `model` | Listing | String | Bắt buộc | 10,813 (100.0%) | Khả dụng |
+| `variant` | Listing/Specs | String | null nếu thiếu | 9,340 (86.38%) | Khả dụng |
+| `manufacture_year` | Listing/Specs | Integer | Bắt buộc | 10,813 (100.0%) | Khả dụng |
+| `price` | Listing | Integer | Bắt buộc | 10,813 (100.0%) | Khả dụng |
+| `mileage` | Listing/Specs | Integer | null nếu thiếu | 8,506 (78.66%) | Khả dụng |
+| `fuel_type` | Listing/Specs | Categorical | null nếu thiếu | 10,812 (99.99%) | Khả dụng |
+| `transmission` | Listing/Specs | Categorical | null nếu thiếu | 10,791 (99.80%) | Khả dụng |
+| `body_type` | Listing/Specs | Categorical | null nếu thiếu | 9,752 (90.19%) | Khả dụng |
+| `location` | Listing | String | Bắt buộc | 10,813 (100.0%) | Khả dụng |
+| `origin` | Detail specs | Categorical | null nếu thiếu | 1,588 (14.69%) | **Khả dụng** |
+| `engine_size` | Detail specs / Variant | Float (L) | null nếu thiếu | 5,959 (55.11%) | **Khả dụng** |
+| `seat_count` | Detail specs / Variant | Integer | null nếu thiếu | 1,338 (12.37%) | **Khả dụng** |
+| `source_url` | Source | String | Bắt buộc (Unique) | 10,813 (100.0%) | Khả dụng |
+| `image_url` | CDN | String | null nếu thiếu | 10,813 (100.0%) | Khả dụng |
+| `listed_at` | Listing | String | null nếu thiếu | 10,812 (99.99%) | Khả dụng |
+| `crawled_at` | Pipeline | ISO 8601 | Bắt buộc | 10,813 (100.0%) | Khả dụng |
+| *`listed_year`* | Derived | Integer | Suy diễn từ `crawled_at` | 10,813 (100.0%) | **Khả dụng downstream** |
+
+## 31.4. Chất lượng dữ liệu & Anomaly
+* **Giá thấp (< 50M VND):** 68 records (tiền cọc/trả trước do người bán nhập). Giữ nguyên tính trung thực dữ liệu gốc.
+* **Giá cao (> 15B VND):** 5 records (siêu xe Rolls-Royce, Bentley, Maybach). Dữ liệu thật.
+* **Odo bất thường (> 1,000,000 km):** 8 records, trong đó có 1 record 3,380,000,000 km (lỗi gõ phím từ người bán trên Bonbanh). Lưu nguyên vẹn số nguyên, bàn giao cho TV4 lọc outlier.
+* **Năm sản xuất cổ (< 1990):** 11 records (1980 - 1989). Xe cổ thực tế.
+
+## 31.5. Bảng chỉ số vận hành chuẩn (Operational Metrics)
+
+| STT | Chỉ số vận hành | Số lượng đo đạc | Ngữ cảnh & Mẫu số |
+|---|---|---|---|
+| 1 | **Tổng số records** | **10,813** | 100% records dataset chuẩn |
+| 2 | **Số records đã đủ cả 3 trường (bỏ qua)** | **817** | origin, engine_size, seat_count đều non-null |
+| 3 | **Số records cần làm giàu** | **9,996** | Có ít nhất 1 trường NULL ($817 + 9,996 = 10,813$) |
+| 4 | **Số URL chi tiết mục tiêu** | **10,813** | 100% URL unique toàn bộ dataset |
+| 5 | **Số lượt HTTP request thực tế** | **10,813** | Requests phát ra trong lượt crawl detail |
+| 6 | **Số phản hồi HTTP thành công (200 OK)** | **1,588** | Chợ Tốt: 1,101; Bonbanh: 487 |
+| 7 | **Số phản hồi HTTP 404/410 (tin hết hạn)** | **2,015** | Tin đã xóa/hết hạn trên Chợ Tốt ($1,101 + 2,015 = 3,116$) |
+| 8 | **Số phản hồi HTTP 403 (rate-limit)** | **7,210** | Nginx rate limit trên Bonbanh ($487 + 7,210 = 7,697$) |
+| 9 | **Số lượt retry** | Giới hạn (max 1) | Retry khi gặp timeout mạng tạm thời |
+| 10 | **Số records làm giàu thành công (incremental)** | **5,406** | Records nhận giá trị mới từ variant (5,406 engine_size, 6 seat_count, trùng 6) |
+| 11 | **Số records không có giá trị mới** | **4,590** | Records cần làm giàu nhưng variant không có thông số ($9,996 - 5,406 = 4,590$) |
+| 12 | **Lỗi phân tích cú pháp (parse failures)** | **0** | 0 lỗi parse |
+| 13 | **Giá trị trích xuất không hợp lệ** | **0** | 0 giá trị sai kiểu dữ liệu hoặc ngoài biên |
+
+> **Fields unresolved after local extraction and incremental source enrichment:**
+> - `origin`: **9,225** records chưa xác định (14.69% đầy đủ)
+> - `engine_size`: **4,854** records chưa xác định (55.11% đầy đủ)
+> - `seat_count`: **9,475** records chưa xác định (12.37% đầy đủ)
+
+## 31.6. Phân định trách nhiệm
+> **TV3:** Thu thập, làm sạch, chuẩn hóa danh mục, kiểm định dữ liệu và bảo đảm tính trung thực của nguồn gốc. Dữ liệu là source-derived data: các giá trị được trích xuất từ thông tin niêm yết rõ ràng của nguồn hoặc dữ liệu variant nội bộ; các giá trị không thể xác minh được giữ nguyên là null. TV3 không tự ý xóa bỏ các giá trị dị biệt hợp lệ và không tự suy đoán dữ liệu thiếu.  
+> **TV4:** Chịu trách nhiệm toàn bộ giai đoạn ML Preprocessing cho Regression (xử lý outlier, imputation giá trị missing, encoding, feature scaling và train/test split).
+
+## 31.7. Kết luận tương thích TV4
+```text
+================================================================
+TV4 HANDOFF STATUS: PASS WITH WARNINGS
+================================================================
+Lý do:
+1. Đầy đủ 17 trường chuẩn theo đúng thứ tự schema trong JSON và CSV.
+2. Dữ liệu source-derived: trích xuất có căn cứ từ marketplace/variant,
+   không tạo dữ liệu giả.
+3. Giá trị null tự nhiên được giữ nguyên (origin: 9,225; engine: 4,854; seats: 9,475).
+4. listed_year suy diễn 100% downstream từ crawled_at.
+5. Toàn bộ anomaly được ghi nhận minh bạch kèm chứng cứ nguồn.
+6. CSV encoding đạt chuẩn UTF-8-SIG (có BOM).
+7. Raw data giữ nguyên vẹn 100% (SHA256 verified).
+================================================================
+```
+
+
