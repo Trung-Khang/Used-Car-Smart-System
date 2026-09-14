@@ -38,7 +38,15 @@ flowchart TD
     J --> K --> L --> M
 ```
 
-Giai đoạn 1 khóa **schema dữ liệu đầu vào**, không phải schema database. Giai đoạn 2 do TV5 chủ trì. TV5 có thể khảo sát thiết kế và TV1 có thể lập danh sách chênh lệch ngay trong giai đoạn 1; việc sửa import/JPA theo bản chính thức bắt đầu sau khi giai đoạn 2 được chấp nhận.
+# Tổng quát quá trình: 
+
+1. TV3 đọc cả hai file TV3_dataset_handoff_review.md và emergency_mission.md , rồi thực hiện Giai đoạn 1 trong emergency_mission: khóa Data Contract 17 trường, sửa validator/pipeline và bàn giao mapping cho TV5.
+2. TV5 dùng Data Contract của TV3 cùng các phát hiện trong dataset_handoff_review để chốt SQL, ERD, Data Dictionary và mapping chính thức.
+3. TV1 review schema trong lúc chờ, sau đó sửa JPA khi TV5 công bố schema đã được nhóm chấp nhận.
+4. TV4 kiểm tra feature model, unit, nullable và bảo đảm các trường ML được giữ trong database.
+5. TV2 chờ API contract từ TV1 rồi tích hợp giao diện.
+
+Giai đoạn 1, TV3 khóa **schema dữ liệu đầu vào**, không phải schema database. Giai đoạn 2 do TV5 chủ trì. TV5 có thể khảo sát thiết kế và TV1 có thể lập danh sách chênh lệch ngay trong giai đoạn 1; việc sửa import/JPA theo bản chính thức bắt đầu sau khi giai đoạn 2 được chấp nhận.
 
 Không cần chờ TV3 cào thêm để thống nhất schema hoặc triển khai Increment 2. Các trường thiếu tự nhiên được lưu null. Enrichment phục vụ model tiếp tục theo nhiệm vụ riêng của TV3/TV4.
 
