@@ -1,41 +1,46 @@
 .vehicle-list-page {
   display: flex;
   flex-direction: column;
-  gap: 28px;
+  gap: 32px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 48px 24px;
 }
 
 .page-header {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  border-bottom: 1px solid var(--border-color);
-  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-light);
+  padding-bottom: 20px;
   gap: 16px;
 }
 
 .page-title {
-  font-size: 26px;
+  font-size: 28px;
   font-weight: 800;
-  color: var(--secondary-color);
+  color: var(--text-primary);
+  letter-spacing: -0.3px;
 }
 
 .page-subtitle {
   font-size: 14px;
-  color: var(--text-muted);
-  margin-top: 4px;
+  color: var(--text-secondary);
+  margin-top: 6px;
 }
 
 .vehicle-count-badge {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background-color: var(--primary-light);
-  color: var(--primary-color);
+  background-color: #ffffff;
+  border: 1px solid var(--border-light);
+  color: var(--text-primary);
   padding: 8px 16px;
-  border-radius: 9999px;
-  font-size: 14px;
+  border-radius: var(--radius-xs);
+  font-size: 13px;
   font-weight: 600;
-  white-space: nowrap;
+  box-shadow: var(--shadow-card);
 }
 
 @media (max-width: 640px) {

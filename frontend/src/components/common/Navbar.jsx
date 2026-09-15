@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
-import { FaCar, FaBars, FaTimes } from 'react-icons/fa';
+import { FaBars, FaTimes } from 'react-icons/fa';
 import './Navbar.css';
 
 const Navbar = () => {
@@ -18,16 +18,12 @@ const Navbar = () => {
     <header className="navbar-header">
       <div className="navbar-container">
         <Link to="/" className="navbar-logo" onClick={closeMenu}>
-          <div className="logo-icon-wrapper">
-            <FaCar className="logo-icon" />
-          </div>
-          <div className="logo-text">
-            <span className="logo-title">SmartCar</span>
-            <span className="logo-subtitle">Decision Support</span>
-          </div>
+          <span className="logo-dot">●</span>
+          <span className="logo-brand">SmartCar</span>
+          <span className="logo-ext">.ai</span>
         </Link>
 
-        {/* Mobile toggle button */}
+        {/* Mobile toggle */}
         <button
           className="navbar-toggle"
           onClick={toggleMenu}
@@ -36,7 +32,7 @@ const Navbar = () => {
           {isOpen ? <FaTimes /> : <FaBars />}
         </button>
 
-        {/* Navigation links */}
+        {/* Nav Links */}
         <nav className={`navbar-nav ${isOpen ? 'open' : ''}`}>
           <NavLink
             to="/"
@@ -51,19 +47,27 @@ const Navbar = () => {
             className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
             onClick={closeMenu}
           >
-            Danh sách xe
+            Tìm xe
           </NavLink>
+          
           <div className="nav-item-disabled" title="Khả dụng từ Increment 3">
             <span className="nav-link disabled">
-              Định giá tự động
-              <span className="nav-badge">Inc 3</span>
+              Định giá
+              <span className="nav-tag-badge">Inc 3</span>
             </span>
           </div>
+
           <div className="nav-item-disabled" title="Khả dụng từ Increment 4">
             <span className="nav-link disabled">
               Gợi ý & So sánh
-              <span className="nav-badge">Inc 4</span>
+              <span className="nav-tag-badge">Inc 4</span>
             </span>
+          </div>
+
+          <div className="navbar-action">
+            <Link to="/vehicles" className="nav-cta-btn" onClick={closeMenu}>
+              Khám phá xe
+            </Link>
           </div>
         </nav>
       </div>
@@ -72,4 +76,3 @@ const Navbar = () => {
 };
 
 export default Navbar;
-

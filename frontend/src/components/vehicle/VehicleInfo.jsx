@@ -114,3 +114,4 @@ const VehicleInfo = ({ vehicle }) => {
 };
 
 export default VehicleInfo;
+

@@ -1,7 +1,10 @@
 .vehicle-detail-page {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 24px;
 }
 
 .detail-navigation-bar {
@@ -17,6 +20,6 @@
 }
 
 .breadcrumb-text {
-  font-size: 14px;
+  font-size: 13px;
   color: var(--text-muted);
 }
