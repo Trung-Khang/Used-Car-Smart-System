@@ -1,51 +1,48 @@
-# ERD — Increment 1
+# Entity Relationship Diagram (ERD) - Version 2.0.0
 
-The workflow explicitly requires PostgreSQL and the system contains vehicle listing,
-pricing/prediction, recommendation and comparison concepts. The following ERD is
-the proposed foundation model; it must be reviewed against the actual Spring Boot
-entities before implementation.
+**Project:** Used-Car-Smart-System  
+**Author:** TV5 (Database Master)  
+**Date:** 15/09/2026  
+
+## ERD Diagram
 
 ```mermaid
 erDiagram
-    VEHICLE ||--o{ COMPARISON_VEHICLE : "selected in"
-    VEHICLE_COMPARISON ||--o{ COMPARISON_VEHICLE : contains
+    SOURCES ||--o{ LISTINGS : "publishes"
+    VEHICLES ||--o{ LISTINGS : "described_by"
 
-    VEHICLE {
-        bigint vehicle_id PK
-        varchar make
-        varchar model
-        int year
-        numeric mileage
-        varchar fuel
-        varchar transmission
-        numeric listing_price
-        numeric predicted_price
-        numeric difference_percent
-        varchar model_version
-        text source_url
-        timestamp created_at
-        timestamp updated_at
+    SOURCES {
+        int id PK
+        string code UK
+        string name
+        string base_url
     }
 
-    VEHICLE_COMPARISON {
-        bigint comparison_id PK
-        timestamp created_at
+    VEHICLES {
+        bigint id PK
+        string brand
+        string model
+        string variant
+        int manufacture_year
+        string body_type
+        string fuel_type
+        string transmission
+        string engine_size
+        int seat_count
+        string origin
     }
 
-    COMPARISON_VEHICLE {
-        bigint comparison_id PK, FK
-        bigint vehicle_id PK, FK
+    LISTINGS {
+        bigint id PK
+        bigint vehicle_id FK
+        int source_id FK
+        numeric price
+        int mileage
+        string color
+        string location
+        string source_url UK
+        string image_url
+        timestamptz crawled_at
+        string listed_at_raw
+        timestamptz created_at
     }
-```
-
-## Relationship
-- One comparison contains multiple selected vehicles.
-- One vehicle can participate in multiple comparisons.
-- `comparison_vehicle` resolves the many-to-many relationship.
-
-## Not yet fixed by the workflow
-- User/account entity
-- Recommendation persistence
-- Raw/clean staging tables
-- Exact crawler-source entity
-- Exact authentication model
