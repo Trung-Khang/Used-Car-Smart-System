@@ -299,3 +299,21 @@
 
 - **Chú ý/ Ghi chú:**
   - Tất cả mã nguồn tuân thủ tiêu chuẩn code sạch (Clean Code), đặt tên biến/hàm nhất quán và có CSS chuyên biệt theo từng component.
+
+---
+
+### Bổ sung: Tinh chỉnh UX/UI theo phong cách Decision Support System (Hình ảnh mẫu)
+
+- **Việc đã hoàn thành:**
+  - Cập nhật toàn bộ hệ thống màu sắc theo phong cách chuyên nghiệp, hiện đại:
+    - Nền Navbar / Hero / Footer: Xanh than đậm cao cấp (`#16202c`).
+    - Nền các Section nội dung: Màu kem ngà ấm áp (`#f4f2ee`), không gây mỏi mắt.
+    - Màu điểm nhấn thương hiệu: Vàng cát / Amber ánh đồng (`#c69242`).
+  - Thiết kế lại trang chủ `HomePage.jsx` chuẩn theo layout tham khảo:
+    - Hero headline sắc sảo: "Biết giá thật của một chiếc xe cũ, trước khi bạn đặt cọc."
+    - Tích hợp khung **ƯỚC TÍNH NHANH** bên phải (Quick Estimator Card): hỗ trợ chọn Hãng, Dòng xe, Năm, Số km và hiển thị khoảng giá ước tính kèm thanh đo độ tin cậy mô hình (92%).
+    - Bổ sung thanh **Thống kê Thị trường (Market KPI Bar)** hiển thị các chỉ số cốt lõi: 128.450 tin đăng theo dõi, 15 phút cập nhật, 4,2% sai số MAPE, 3.200+ giao dịch/tháng.
+    - Khu vực **Gợi ý xe theo mức độ hời**: các thẻ xe hiển thị nhãn Smart Tag nổi bật (Giá tốt - xanh lá, Đúng giá thị trường - xanh dương, Cao hơn thị trường - cam đỏ).
+    - Khối **4 bước quy trình mô hình** (Thu thập dữ liệu, Làm sạch & chuẩn hóa, Mô hình định giá, Gợi ý & độ tin cậy).
+  - Tinh chỉnh các trang `VehicleListPage.jsx` và `VehicleDetailPage.jsx` đồng bộ phong cách tối giản, sang trọng.
+  - Kiểm tra build thành công 100% không phát sinh lỗi.
