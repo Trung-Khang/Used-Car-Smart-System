@@ -1,99 +1,56 @@
--- =========================================================
--- SMART USED-CAR DECISION SUPPORT SYSTEM
--- Member 05 - Increment 1: Foundation
--- Database: PostgreSQL
--- =========================================================
+-- PostgreSQL Schema Version 2.0.0 for Increment 2
+-- Author: TV5 (Database Master)
+-- Date: 15/09/2026
 
+DROP TABLE IF EXISTS listings CASCADE;
+DROP TABLE IF EXISTS vehicles CASCADE;
+DROP TABLE IF EXISTS sources CASCADE;
 
--- =========================================================
--- 1. VEHICLE
--- Lưu thông tin xe ô tô cũ
--- =========================================================
+-- 1. Bảng Nguồn Dữ Liệu (Sources)
+CREATE TABLE sources (
+    id SERIAL PRIMARY KEY,
+    code VARCHAR(50) NOT NULL UNIQUE,       -- 'bonbanh', 'chotot'
+    name VARCHAR(100) NOT NULL,              -- 'Bốn Bánh', 'Chợ Tốt'
+    base_url TEXT
+);
 
-CREATE TABLE IF NOT EXISTS vehicle (
-    vehicle_id BIGSERIAL PRIMARY KEY,
+INSERT INTO sources (code, name, base_url) VALUES 
+('bonbanh', 'Bốn Bánh', 'https://bonbanh.com'),
+('chotot', 'Chợ Tốt', 'https://xe.chotot.com');
 
-    make VARCHAR(100) NOT NULL,
-
+-- 2. Bảng Thông Số Cấu Hình Xe (Vehicles)
+CREATE TABLE vehicles (
+    id BIGSERIAL PRIMARY KEY,
+    brand VARCHAR(100) NOT NULL,
     model VARCHAR(100) NOT NULL,
-
-    year INTEGER,
-
-    mileage NUMERIC(12, 2),
-
-    fuel VARCHAR(50),
-
+    variant VARCHAR(100),
+    manufacture_year INT NOT NULL CHECK (manufacture_year >= 1900),
+    body_type VARCHAR(50),
+    fuel_type VARCHAR(50),
     transmission VARCHAR(50),
-
-    listing_price NUMERIC(14, 2),
-
-    predicted_price NUMERIC(14, 2),
-
-    difference_percent NUMERIC(8, 2),
-
-    model_version VARCHAR(50),
-
-    source_url TEXT,
-
-    created_at TIMESTAMP NOT NULL
-        DEFAULT CURRENT_TIMESTAMP,
-
-    updated_at TIMESTAMP NOT NULL
-        DEFAULT CURRENT_TIMESTAMP
+    engine_size VARCHAR(50),                -- Giữ dạng chuỗi dung tích (vd: '2.0L')
+    seat_count INT,
+    origin VARCHAR(100)                      -- 'Domestic' / 'Imported'
 );
 
-
--- =========================================================
--- 2. VEHICLE_COMPARISON
--- Lưu thông tin một phiên so sánh xe
--- =========================================================
-
-CREATE TABLE IF NOT EXISTS vehicle_comparison (
-    comparison_id BIGSERIAL PRIMARY KEY,
-
-    created_at TIMESTAMP NOT NULL
-        DEFAULT CURRENT_TIMESTAMP
+-- 3. Bảng Tin Rao Bán (Listings)
+CREATE TABLE listings (
+    id BIGSERIAL PRIMARY KEY,
+    vehicle_id BIGINT REFERENCES vehicles(id) ON DELETE CASCADE,
+    source_id INT REFERENCES sources(id),
+    price NUMERIC(15, 2) NOT NULL CHECK (price >= 0),
+    mileage INT CHECK (mileage >= 0),
+    color VARCHAR(50),
+    location VARCHAR(100) NOT NULL,
+    source_url TEXT NOT NULL UNIQUE,          -- Unique Key chống trùng khi import lặp
+    image_url TEXT,
+    crawled_at TIMESTAMPTZ NOT NULL,         -- Mốc thời gian quan sát chuẩn có timezone
+    listed_at_raw VARCHAR(255),              -- Giữ nguyên chuỗi thời gian tương đối
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 
-
--- =========================================================
--- 3. COMPARISON_VEHICLE
--- Bảng trung gian giữa vehicle và vehicle_comparison
--- Quan hệ nhiều - nhiều
--- =========================================================
-
-CREATE TABLE IF NOT EXISTS comparison_vehicle (
-    comparison_id BIGINT NOT NULL,
-
-    vehicle_id BIGINT NOT NULL,
-
-    PRIMARY KEY (comparison_id, vehicle_id),
-
-    CONSTRAINT fk_comparison_vehicle_comparison
-        FOREIGN KEY (comparison_id)
-        REFERENCES vehicle_comparison(comparison_id)
-        ON DELETE CASCADE,
-
-    CONSTRAINT fk_comparison_vehicle_vehicle
-        FOREIGN KEY (vehicle_id)
-        REFERENCES vehicle(vehicle_id)
-        ON DELETE CASCADE
-);
-
-
--- =========================================================
--- 4. INDEX
--- Hỗ trợ Search / Filter
--- =========================================================
-
-CREATE INDEX IF NOT EXISTS idx_vehicle_make_model
-ON vehicle(make, model);
-
-CREATE INDEX IF NOT EXISTS idx_vehicle_year
-ON vehicle(year);
-
-CREATE INDEX IF NOT EXISTS idx_vehicle_listing_price
-ON vehicle(listing_price);
-
-CREATE INDEX IF NOT EXISTS idx_vehicle_mileage
-ON vehicle(mileage);
+-- Indexes phục vụ tìm kiếm, lọc và sắp xếp (TV1)
+CREATE INDEX idx_vehicles_brand_model ON vehicles(brand, model);
+CREATE INDEX idx_vehicles_specs ON vehicles(fuel_type, transmission, body_type);
+CREATE INDEX idx_listings_price ON listings(price);
+CREATE INDEX idx_listings_crawled_at ON listings(crawled_at DESC);

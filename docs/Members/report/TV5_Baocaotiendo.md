@@ -837,3 +837,20 @@ Testing
 ```
 
 Trong các Increment tiếp theo, Member 05 sẽ chuyển trọng tâm từ **thiết kế nền tảng** sang **Database Testing → Integration Testing → Recommendation / Comparison / Decision Support**.
+
+### [TV5] Pull Request: Ban hành Database Schema Official Version 2.0.0
+
+- **Branch:** `feature/tv5-database-schema-v2.0.0`
+- **Người chủ trì:** TV5 (Database Master)
+- **Trạng thái:** Chờ Review từ Leader, TV1, TV3, TV4.
+
+#### Các tài liệu đã cập nhật:
+1. `database/schema/schema.sql`: Script DDL chính thức cho PostgreSQL.
+2. `docs/Database/ERD/ERD.md`: Sơ đồ ERD dạng Mermaid cho 3 bảng `sources`, `vehicles`, `listings`.
+3. `docs/Database/Data_Dictionary.md`: Từ điển dữ liệu và Bảng Mapping Matrix 17 trường.
+
+#### Yêu cầu Review từng vị trí:
+- **Leader:** Đánh giá tính sẵn sàng của Schema để duyệt chuyển Giai đoạn 3.
+- **TV1 (Backend):** Confirm thuộc tính Entity JPA (`Vehicle`, `Listing`) khớp 100% với DDL để sẵn sàng cấu hình `ddl-auto=validate`.
+- **TV3 (Data):** Confirm script `import_pipeline.py` đổ dữ liệu vào đúng các tên cột và bảng trong `schema.sql`.
+- **TV4 (Model):** Confirm không có trường feature nào bị loại bỏ khỏi Database.
