@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
-import { FaBars, FaTimes } from 'react-icons/fa';
+import { FaCar, FaBars, FaTimes } from 'react-icons/fa';
 import './Navbar.css';
 
 const Navbar = () => {
@@ -18,9 +18,13 @@ const Navbar = () => {
     <header className="navbar-header">
       <div className="navbar-container">
         <Link to="/" className="navbar-logo" onClick={closeMenu}>
-          <span className="logo-dot">●</span>
-          <span className="logo-brand">SmartCar</span>
-          <span className="logo-ext">.ai</span>
+          <div className="logo-car-icon">
+            <FaCar />
+          </div>
+          <div className="logo-text-group">
+            <span className="logo-brand">USED CAR</span>
+            <span className="logo-sub">Smart Decision System</span>
+          </div>
         </Link>
 
         {/* Mobile toggle */}
@@ -32,7 +36,7 @@ const Navbar = () => {
           {isOpen ? <FaTimes /> : <FaBars />}
         </button>
 
-        {/* Nav Links */}
+        {/* Navigation links */}
         <nav className={`navbar-nav ${isOpen ? 'open' : ''}`}>
           <NavLink
             to="/"
@@ -47,12 +51,12 @@ const Navbar = () => {
             className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
             onClick={closeMenu}
           >
-            Tìm xe
+            Danh sách xe
           </NavLink>
-          
+
           <div className="nav-item-disabled" title="Khả dụng từ Increment 3">
             <span className="nav-link disabled">
-              Định giá
+              Định giá tự động
               <span className="nav-tag-badge">Inc 3</span>
             </span>
           </div>
@@ -66,7 +70,7 @@ const Navbar = () => {
 
           <div className="navbar-action">
             <Link to="/vehicles" className="nav-cta-btn" onClick={closeMenu}>
-              Khám phá xe
+              Xem danh sách xe
             </Link>
           </div>
         </nav>

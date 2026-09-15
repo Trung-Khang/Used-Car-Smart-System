@@ -5,14 +5,14 @@ import { MOCK_VEHICLES } from '../utils/mockVehicles';
 import './HomePage.css';
 
 const HomePage = () => {
-  // Lấy 3 xe đầu tiên hiển thị dạng gợi ý tiêu biểu giống hình mẫu
+  // Lấy 3 xe làm mẫu tiêu biểu cho phần gợi ý
   const topVehicles = MOCK_VEHICLES.slice(0, 3);
 
   // Form ước tính nhanh ở Hero
   const [quickBrand, setQuickBrand] = useState('Toyota');
   const [quickModel, setQuickModel] = useState('Vios 1.5G');
-  const [quickYear, setQuickYear] = useState('2020');
-  const [quickKm, setQuickKm] = useState('45.000 km');
+  const [quickYear, setQuickYear] = useState('2021');
+  const [quickKm, setQuickKm] = useState('38.000 km');
   const [isCalculated, setIsCalculated] = useState(true);
 
   const handleQuickEstimate = (e) => {
@@ -22,35 +22,36 @@ const HomePage = () => {
 
   return (
     <div className="homepage-wrapper">
-      {/* 1. HERO SECTION (Dark Navy) */}
+      {/* 1. HERO SECTION */}
       <section className="hero-dark-section">
         <div className="hero-inner">
           <div className="hero-left-column">
+            <span className="hero-kicker">Hệ Thống Hỗ Trợ Ra Quyết Định Thông Minh</span>
             <h1 className="hero-headline">
-              Biết giá thật của một chiếc xe cũ, trước khi bạn đặt cọc.
+              Định giá minh bạch & gợi ý xe ô tô cũ tối ưu ngân sách
             </h1>
             <p className="hero-lead">
-              SmartCar.ai đối chiếu đặc điểm xe của bạn với hàng trăm nghìn tin đăng và giao dịch thực tế đang diễn ra trên thị trường, để đưa ra một mức giá có căn cứ — không phải cảm tính người bán.
+              Hệ thống thu thập dữ liệu thị trường thực tế, ứng dụng mô hình hồi quy để ước lượng giá trị thật của xe và thuật toán xếp hạng đa tiêu chí, giúp người mua đưa ra quyết định chính xác và tự tin trước khi giao dịch.
             </p>
 
             <div className="hero-cta-group">
               <Link to="/vehicles" className="btn btn-gold">
-                Định giá xe của tôi
+                Khám phá danh sách xe
               </Link>
-              <Link to="/vehicles" className="btn btn-outline-white">
-                Xem xe được gợi ý
-              </Link>
+              <a href="#recommendations" className="btn btn-outline-white">
+                Xem xe gợi ý theo mức giá
+              </a>
             </div>
 
             <p className="hero-footnote">
-              Mô hình học từ dữ liệu thị trường cập nhật liên tục, không phải bảng giá cố định theo năm sản xuất.
+              Đồ án kết hợp Data Pipeline (Python), Mô hình Định giá Hồi quy (R Plumber), Core Backend (Spring Boot) và Giao diện (ReactJS).
             </p>
           </div>
 
-          {/* Khung ước tính nhanh bên phải */}
+          {/* Khung mô phỏng ước tính giá nhanh */}
           <div className="hero-right-column">
             <div className="quick-estimate-card">
-              <h3 className="estimate-card-title">ƯỚC TÍNH NHANH</h3>
+              <h3 className="estimate-card-title">MÔ PHỎNG ĐỊNH GIÁ NHANH</h3>
               
               <form onSubmit={handleQuickEstimate} className="estimate-form">
                 <div className="form-row-2">
@@ -93,7 +94,7 @@ const HomePage = () => {
                     />
                   </div>
                   <div className="form-group">
-                    <label>Số km đã đi</label>
+                    <label>Số km đã đi (ODO)</label>
                     <input
                       type="text"
                       value={quickKm}
@@ -103,23 +104,23 @@ const HomePage = () => {
                 </div>
 
                 <button type="submit" className="btn-estimate-submit">
-                  Ước tính giá trị
+                  Ước tính giá thị trường
                 </button>
               </form>
 
               {isCalculated && (
                 <div className="estimate-result-box">
-                  <div className="estimate-price-range">465 – 495 triệu đ</div>
+                  <div className="estimate-price-range">470 – 495 triệu ₫</div>
                   <div className="estimate-meta-text">
-                    Dựa trên 342 tin đăng & 58 giao dịch tương đồng trong 30 ngày
+                    Giá dự đoán từ mô hình hồi quy đa biến dựa trên dữ liệu giao dịch cùng phân khúc
                   </div>
                   <div className="confidence-bar-wrapper">
                     <div className="confidence-label">
-                      <span>Độ tin cậy mô hình</span>
-                      <span className="confidence-val">92%</span>
+                      <span>Độ phù hợp dữ liệu thị trường</span>
+                      <span className="confidence-val">94%</span>
                     </div>
                     <div className="progress-track">
-                      <div className="progress-fill" style={{ width: '92%' }}></div>
+                      <div className="progress-fill" style={{ width: '94%' }}></div>
                     </div>
                   </div>
                 </div>
@@ -129,38 +130,38 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* 2. STATS KPI BAR (Dark Navy strip) */}
+      {/* 2. STATS KPI BAR */}
       <section className="stats-kpi-bar">
         <div className="stats-inner">
           <div className="stat-item">
-            <span className="stat-number">128.450</span>
-            <span className="stat-desc">tin đăng đang được theo dõi</span>
+            <span className="stat-number">2.000+</span>
+            <span className="stat-desc">dữ liệu xe thị trường thực tế</span>
           </div>
           <div className="stat-item">
-            <span className="stat-number">15 phút</span>
-            <span className="stat-desc">tần suất cập nhật dữ liệu</span>
+            <span className="stat-number">R Plumber</span>
+            <span className="stat-desc">mô hình định giá hồi quy tự động</span>
           </div>
           <div className="stat-item">
-            <span className="stat-number">4,2%</span>
-            <span className="stat-desc">sai số trung bình (MAPE)</span>
+            <span className="stat-number">5 Tiêu chí</span>
+            <span className="stat-desc">thuật toán chấm điểm gợi ý xe</span>
           </div>
           <div className="stat-item">
-            <span className="stat-number">3.200+</span>
-            <span className="stat-desc">giao dịch thực tế mỗi tháng</span>
+            <span className="stat-number">Smart Tag</span>
+            <span className="stat-desc">đánh giá giá tốt / hợp lý / giá cao</span>
           </div>
         </div>
       </section>
 
-      {/* 3. SECTION GỢI Ý CHO BẠN (Warm beige background) */}
-      <section className="recommendation-showcase-section">
+      {/* 3. SECTION GỢI Ý CHO BẠN */}
+      <section id="recommendations" className="recommendation-showcase-section">
         <div className="section-content-limit">
           <div className="showcase-header">
-            <span className="gold-subheading">Gợi ý cho bạn</span>
+            <span className="gold-subheading">Hỗ trợ ra quyết định</span>
             <h2 className="showcase-title">
-              Xe phù hợp, xếp hạng theo mức độ hời so với thị trường
+              Danh sách xe tiêu biểu & Đánh giá mức độ hợp lý của giá bán
             </h2>
             <p className="showcase-desc">
-              Mỗi xe được gắn nhãn dựa trên khoảng cách giữa giá rao bán và giá mô hình dự đoán cho cùng cấu hình.
+              Mỗi xe được so sánh giữa giá rao bán thực tế và mức giá ước lượng từ mô hình định giá, giúp người mua nhận biết ngay những xe có giá tốt trên thị trường.
             </p>
           </div>
 
@@ -168,48 +169,48 @@ const HomePage = () => {
 
           <div className="showcase-bottom-action">
             <Link to="/vehicles" className="btn btn-secondary">
-              Xem tất cả danh sách xe ({MOCK_VEHICLES.length} xe)
+              Xem toàn bộ danh sách xe ({MOCK_VEHICLES.length} xe)
             </Link>
           </div>
         </div>
       </section>
 
-      {/* 4. SECTION VỀ MÔ HÌNH (4 Bước xử lý) */}
+      {/* 4. SECTION QUY TRÌNH HỆ THỐNG */}
       <section className="model-process-section">
         <div className="section-content-limit">
           <div className="showcase-header">
-            <span className="gold-subheading">Về mô hình</span>
+            <span className="gold-subheading">Kiến trúc hệ thống</span>
             <h2 className="showcase-title">
-              Từ dữ liệu rao vặt đến một con số bạn có thể tin
+              Quy trình xử lý dữ liệu và hỗ trợ ra quyết định
             </h2>
             <p className="showcase-desc">
-              Bốn bước xử lý biến hàng trăm nghìn tin đăng rời rạc thành một mức giá và một khuyến nghị cụ thể.
+              Hệ thống liên kết chặt chẽ qua 4 công đoạn chính giữa các thành viên để đưa ra kết quả phân tích đáng tin cậy.
             </p>
           </div>
 
           <div className="process-steps-grid">
             <div className="step-card">
               <span className="step-index">01</span>
-              <h4>Thu thập dữ liệu</h4>
-              <p>Đồng bộ tin đăng và tin đã bán từ nhiều sàn giao dịch xe cũ theo thời gian gần thực.</p>
+              <h4>Thu thập dữ liệu (TV3)</h4>
+              <p>Pipeline Python thu thập tin rao bán xe ô tô cũ thực tế từ các nguồn sàn trực tuyến.</p>
             </div>
 
             <div className="step-card">
               <span className="step-index">02</span>
-              <h4>Làm sạch & chuẩn hóa</h4>
-              <p>Loại bỏ tin trùng lặp, chuẩn hóa tên hãng, phiên bản và các thông số kỹ thuật.</p>
+              <h4>Làm sạch & Chuẩn hóa (TV3, TV5)</h4>
+              <p>Lọc trùng lặp, chuẩn hóa giá VND, số km ODO, năm sản xuất và lưu trữ vào PostgreSQL Database.</p>
             </div>
 
             <div className="step-card">
               <span className="step-index">03</span>
-              <h4>Mô hình định giá</h4>
-              <p>Gradient Boosting / Hồi quy đa biến học mối quan hệ giữa đặc trưng xe, khu vực và giá giao dịch.</p>
+              <h4>Mô hình định giá (TV4)</h4>
+              <p>Mô hình hồi quy trong R được đóng gói qua Plumber API để dự đoán mức giá hợp lý theo thông số xe.</p>
             </div>
 
             <div className="step-card">
               <span className="step-index">04</span>
-              <h4>Gợi ý & độ tin cậy</h4>
-              <p>Xếp hạng xe phù hợp với ngân sách, kèm khoảng giá và mức độ tin cậy của dự đoán.</p>
+              <h4>Gợi ý & Quyết định (TV1, TV2, TV5)</h4>
+              <p>Spring Boot tính điểm xếp hạng xe theo ngân sách và ReactJS hiển thị so sánh trực quan cho người dùng.</p>
             </div>
           </div>
         </div>

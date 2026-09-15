@@ -20,17 +20,27 @@
   align-items: center;
 }
 
+.hero-kicker {
+  display: inline-block;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent-gold);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 12px;
+}
+
 .hero-headline {
-  font-size: 42px;
+  font-size: 38px;
   font-weight: 800;
-  line-height: 1.2;
+  line-height: 1.25;
   letter-spacing: -0.5px;
   margin-bottom: 20px;
   color: #ffffff;
 }
 
 .hero-lead {
-  font-size: 16px;
+  font-size: 15px;
   color: #a0aec0;
   line-height: 1.7;
   margin-bottom: 32px;
@@ -134,7 +144,7 @@
 }
 
 .estimate-price-range {
-  font-size: 28px;
+  font-size: 26px;
   font-weight: 800;
   color: var(--text-primary);
   margin-bottom: 6px;
@@ -202,7 +212,7 @@
 }
 
 .stat-number {
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 800;
   color: #ffffff;
 }
@@ -240,7 +250,7 @@
 }
 
 .showcase-title {
-  font-size: 30px;
+  font-size: 28px;
   font-weight: 800;
   color: var(--text-primary);
   line-height: 1.3;
@@ -312,7 +322,7 @@
 
 @media (max-width: 600px) {
   .hero-headline {
-    font-size: 30px;
+    font-size: 28px;
   }
 
   .stats-inner {
