@@ -1,0 +1,130 @@
+/* ===== GLOBAL STYLES & LUXURY / DECISION-SUPPORT PALETTE ===== */
+:root {
+  /* Brand & Dark Theme Colors */
+  --navy-dark: #16202c;
+  --navy-surface: #1e2b3a;
+  --navy-border: #2c3c4f;
+  
+  /* Primary Accent: Vàng ánh đồng / Sand Gold */
+  --accent-gold: #c69242;
+  --accent-gold-hover: #b07f32;
+  --accent-gold-light: #fdf8f0;
+  
+  /* Backgrounds */
+  --bg-warm: #f4f2ee;       /* Nền trang kem ngà tinh tế */
+  --bg-card: #ffffff;
+  --border-light: #e5e2da;
+  
+  /* Text Colors */
+  --text-primary: #192028;
+  --text-secondary: #5a6573;
+  --text-muted: #8c97a5;
+  --text-white: #ffffff;
+  
+  /* Smart Tag / Valuation Status Badges */
+  --badge-good-deal-bg: #eafaf1;
+  --badge-good-deal-text: #1e8e4a;
+  --badge-fair-price-bg: #edf5fd;
+  --badge-fair-price-text: #2563eb;
+  --badge-overpriced-bg: #fdf2e9;
+  --badge-overpriced-text: #d9531e;
+  
+  /* Shadows & Radius */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.04);
+  --shadow-hover: 0 10px 24px rgba(22, 32, 44, 0.08);
+
+  --font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--bg-warm);
+  color: var(--text-primary);
+  line-height: 1.6;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1;
+  width: 100%;
+}
+
+.content-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+/* Common button styles */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 15px;
+  transition: all 0.2s ease;
+}
+
+.btn-gold {
+  background-color: var(--accent-gold);
+  color: #ffffff;
+}
+
+.btn-gold:hover {
+  background-color: var(--accent-gold-hover);
+  transform: translateY(-1px);
+}
+
+.btn-outline-white {
+  background-color: transparent;
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.btn-outline-white:hover {
+  border-color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+.btn-secondary {
+  background-color: #ffffff;
+  color: var(--text-primary);
+  border: 1px solid var(--border-light);
+}
+
+.btn-secondary:hover {
+  background-color: #faf9f6;
+  border-color: #cbd5e1;
+}
