@@ -895,3 +895,40 @@ Trong các Increment tiếp theo, Member 05 sẽ chuyển trọng tâm từ **th
   1. Hỗ trợ TV3 chạy import toàn bộ 10,813 bản ghi lên Database kiểm thử.
   2. Xác nhận log kết quả Hibernate `ddl-auto=validate` với TV1.
   3. Tổng hợp số liệu thực tế gửi Leader nghiệm thu toàn bộ Increment 2.
+
+---
+
+## 5. Bản vá Schema v2.0.1 (16/09/2026)
+
+### Các mismatch đã xử lý
+
+- Bổ sung `listings.image_url` kiểu `VARCHAR(500)`, nullable, để giữ URL ảnh từ dataset TV3 và khớp `Listing.imageUrl` của TV1.
+- Sửa Mapping Matrix theo đúng 17 trường dataset. `color` vẫn là cột mở rộng nullable của Database/JPA nhưng không còn được ghi là cột do TV3 cung cấp.
+- Thống nhất vocabulary: `Gasoline`, `Diesel`, `Hybrid`, `Electric`; `Automatic`, `Manual`, `CVT`; `Domestic`, `Imported` hoặc `NULL`.
+- Chuyển ID của `sources`, `vehicles`, `listings` sang `BIGSERIAL`; các foreign key `vehicle_id`, `source_id` sang `BIGINT` để khớp JPA `Long`.
+- Bổ sung CHECK cho price, mileage, engine_size, seat_count và các vocabulary; nullable field vẫn được phép NULL.
+- Bổ sung index cho mileage, fuel_type, transmission và body_type phục vụ filter Increment 2.
+- Làm rõ `schema.sql` là reset/bootstrap mang tính destructive; thêm migration không xóa dữ liệu `database/migrations/V2_0_1__schema_patch.sql` cho database v2.0.0 đang tồn tại.
+
+### Deliverables v2.0.1
+
+```text
+database/schema/schema.sql
+database/schema/README.md
+database/migrations/V2_0_1__schema_patch.sql
+database/tests/schema_v2_0_1_smoke_test.sql
+docs/Database/ERD/ERD.md
+docs/Database/Data_Dictionary.md
+docs/Database/Mapping_Matrix.md
+reports/Integration_Test_Report.md
+```
+
+### Trạng thái kiểm thử
+
+Static review: hoàn thành. Workspace hiện không có PostgreSQL service, `psql` hoặc Docker để chạy DDL. Vì vậy bootstrap/migration, smoke test, Hibernate `ddl-auto=validate` và import đủ 10.813 listings đều **PENDING**, không được ghi PASS trước khi có log thực thi.
+
+### Bàn giao tiếp theo
+
+- **TV1:** chạy Backend với `HIBERNATE_DDL_AUTO=validate` trên schema v2.0.1 và gửi log kết quả.
+- **TV3:** cập nhật import theo Mapping Matrix v2.0.1, giữ `image_url`, dùng `listed_at_raw`, import và re-import dataset; gửi số dòng insert/update/reject.
+- **TV5:** chạy bootstrap/migration và smoke test trên PostgreSQL, sau đó đối chiếu PK/FK, constraint, URL unique và row count với TV1/TV3.
