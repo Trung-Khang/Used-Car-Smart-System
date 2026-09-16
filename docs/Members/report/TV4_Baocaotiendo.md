@@ -1,114 +1,95 @@
 # TV4 - Bao cao tien do
 
+## Increment 2 - Dataset Integration va EDA
+
+Trang thai: **EDA da hoan thanh tren local snapshot; candidate model va official training chua duoc chot.**
+
+### Dataset da su dung
+
+- Input truc tiep: `crawler/data/cleaned/vehicles_cleaned.csv`; khong copy hay sua dataset TV3.
+- Contract: 17 cot, 10,813 dong, `source_url` unique, CSV UTF-8 with BOM.
+- Local SHA-256: `5a70b532173c897531440105b47ddccfb839198d631ea0375050c57010201b27`.
+- Canh bao provenance: hash tren khac hash `bcec...3513` trong TV3 Phase 1 lock report. TV3 can xac nhan local snapshot la canonical hoac cap nhat lock report truoc official training.
+
+### Ket qua EDA
+
+- `crawled_at` parse dung 100%; `observed_year = year(crawled_at)` va khong co vehicle age am. `listed_at` giu raw text, khong dung lam timestamp.
+- Missing: mileage 2,307 (21.34%), origin 9,225 (85.31%), engine_size 4,854 (44.89%), seat_count 9,475 (87.63%). Khong coi missing mileage la 0 va khong suy dien origin/engine/seats.
+- 68 gia duoi 50 trieu VND, 5 gia tren 15 ty VND, 8 mileage tren 1,000,000 km, 11 xe truoc 1990. Day la training flags, khong sua du lieu goc.
+- Electric co 1,204 dong; 100% `engine_size = NULL`, khong co gia tri 0. `engine_non_ev = 0` chi la feature dan xuat trong model.
+- `body_type` thuc te chua dong bo hoan toan voi document: con `SUV`, `Crossover`, `Van / Minivan`, `Truck`, `Other`, `Wagon`.
+
+### Do phu candidate
+
+- Complete-case legacy: 710 dong (6.57%).
+- Complete-case co EV exception: 747 dong (6.91%).
+- Reduced-feature baseline: 8,407 dong (77.75%).
+- Missing-aware candidate input: 8,428 dong (77.94%).
+
+Complete-case bi lech mau manh: Chotot eligible 11.42% trong khi Bonbanh 4.60%. Khong duoc dung no lam model chinh thuc chi vi no de giai thich.
+
+### Candidate va leakage control
+
+- A: complete-case chi de tham chieu.
+- B: reduced-feature dung age, mileage, fuel, transmission; de day du form hon nhung mat origin/engine/seat.
+- C: missing-aware dung median fit tren train split, missing indicators, category `Unavailable`, va xu ly EV rieng.
+- Khi runtime co san, split truoc preprocessing, fit median/encoding chi tren train, test tren hold-out, ghi seed, va can nhac group split `brand + model + manufacture_year`.
+- Chua co R2/MAE/RMSE/MAPE candidate hay official vi may hien tai chua co Rscript. Khong co `.rds` official.
+
+### Bao cao / ban giao
+
+- `model/regression/eda_dataset.R`: EDA tai lap duoc tu CSV goc.
+- `model/regression/reports/data_quality_report.md`: ket qua EDA va bias/coverage.
+- `model/regression/reports/candidate_strategy.md`: proposal A/B/C va leakage protocol.
+- `model/regression/reports/prediction_contract_proposal.md`: de xuat form/API, chua doi Plumber official.
+- `model/regression/reports/tv3_confirmation.md`: bang chung da co va 2 cau hoi thuc su cho TV3.
+
+### Dieu kien truoc official training
+
+1. TV3 xac nhan checksum/version local va vocabulary body type.
+2. TV4 chay lai EDA/candidate evaluation bang R tren snapshot da xac nhan.
+3. Nhom review missing/outlier policy, group/random split, test metrics va residual analysis.
+4. TV1/TV3/TV4 chot prediction contract phu hop candidate duoc chon.
+
 ## Increment 1 - Regression Foundation
 
-Trang thai: da hoan thanh khung nen tang, dang cho du lieu cleaned tu TV3 de train model chinh thuc.
+Trang thai: **Hoan thanh khung source code va contract; chua co model chinh thuc.**
 
-### Da thuc hien
+TV3 da khoa Data Contract 17 truong va ban cleaned dataset 10,813 dong da co san. TV4 khong train hay cong bo `regression_v1` trong Increment 1 vi missing cua cac feature hien tai can duoc EDA va thong nhat xu ly o Increment 2.
 
-- Tao cau truc `model/regression/` gom `data/`, `src/`, `models/`, `reports/`.
-- Xay dung `model/regression/src/preprocessing.R` de chuan hoa feature, validate cot bat buoc, xu ly unit va feature engineering.
-- Xay dung `model/regression/train_model.R` voi luong train/test split, train regression, tinh metrics va luu artifact `.rds`.
-- Xay dung `model/regression/evaluate_model.R` de danh gia model tren dataset ngoai.
-- Tao `model/plumber/` gom config, handler, schema va file `plumber.R`.
-- Dinh nghia contract request/response trong `model/plumber/schemas/prediction_schema.json`.
-- Tao fixture nho `model/regression/data/fixture_used_cars.csv` chi phuc vu smoke test pipeline.
-- Ghi placeholder report/metrics de neu ro official metrics chua co vi chua nhan du lieu TV3.
+### Da hoan thanh
 
-### Feature contract hien tai
+- Co du cau truc `model/regression/{data,src,models,reports}` va `model/plumber/`.
+- Co preprocessing, metrics, train/test split, evaluation skeleton va fixture smoke path rieng.
+- Dong bo preprocessing va JSON prediction contract voi 17-field TV3 contract va Database Schema v2.0.1.
+- Doi `listed_year` cu thanh `observed_year = year(crawled_at)`; khong nham lan voi nam nguoi ban dang tin.
+- Xac nhan don vi: `price` VND, `mileage` km, `engine_size` lit, `seat_count` seats; `crawled_at` ISO-8601 co timezone.
+- Xac nhan vocabulary `Gasoline/Diesel/Hybrid/Electric`, `Automatic/Manual/CVT`, va `Domestic/Imported`.
+- Giu NULL nguon cho `origin`, `engine_size`, `seat_count`, `mileage`; EV co the NULL `engine_size`, preprocessing chi tao `engine_non_ev = 0` o feature dan xuat.
+- Them bao cao audit/handoff: `model/regression/reports/increment_1_audit.md`.
 
-- `manufacture_year`: nam san xuat xe.
-- `listed_year`: nam listing duoc quan sat.
-- `listed_month`: thang listing duoc quan sat, optional trong `regression_v1`.
-- `vehicle_age = listed_year - manufacture_year`.
-- `mileage`: so km da di, don vi km.
-- `mileage_k = mileage / 1000`.
-- `fuel_type`: `Gasoline`, `Diesel`, `Hybrid`, `Electric`.
-- `transmission`: `Automatic`, `Manual`, `CVT`.
-- `origin`: `Domestic`, `Imported`.
-- `engine_size`: dung tich dong co lit, xe dien dung `0`.
-- `engine_non_ev = 0` voi xe dien, nguoc lai bang `engine_size`.
-- `seat_count`: so cho ngoi.
-- `price`: gia rao ban quan sat duoc, don vi VND, bat buoc khi train.
+### Ket qua kiem tra
 
-### Kiem tra da chay
+- Static review: PASS cho duong dan smoke, tach biet fixture artifact/metrics voi official artifact, va Plumber waiting/error contract.
+- Runtime smoke: PENDING. Moi truong audit khong co `Rscript`, nen chua chay `train_model.R --smoke` hay HTTP Plumber.
+- Khong co official `.rds`, R2, RMSE, MAE, MAPE, hoac ket qua nao duoc dung cho bao cao do an.
 
-- Da chay smoke test bang fixture: `train_model.R --smoke`.
-- Ket qua smoke test tao duoc artifact fixture va metrics fixture.
-- Da test truc tiep `predict_price()` voi artifact fixture va tra ve response gom `predicted_price`, `currency`, `model_version`, `preprocessing_version`, `predicted_at`.
+### Tinh hinh dataset va rui ro model
 
-### Han che / viec dang cho
+- Dataset dung 17 field, 10,813 records, URL unique theo TV3 Phase 1 lock.
+- Missing cao o `origin` (9,225), `engine_size` (4,854), `seat_count` (9,475), va `mileage` (2,307). Complete-case baseline cu chi con khoang 710-715 dong tuy range filter.
+- Vi vay khong duoc coi complete-case regression hien tai la model chinh thuc. Khong yeu cau TV3 tao du lieu gia hoac suy dien feature chi de lam day model.
 
-- Chua train official `model/regression/models/regression_v1.rds` vi chua co cleaned dataset tu TV3.
-- Chua co official R2/MAE/RMSE/MAPE, khong tu dat so lieu.
-- May hien tai chua cai R package `plumber`, nen HTTP API chua chay local duoc cho den khi cai `plumber` va `jsonlite`.
+### Ban giao va phoi hop
 
-### Ban giao cho nhom
+- TV3: xac nhan dataset checksum/version cho EDA; thong bao version moi va completeness neu enrichment thay doi `origin`, `engine_size`, `seat_count`; bao toan NULL va `crawled_at` timezone-aware.
+- TV1: chua goi prediction de demo. Khi Increment 2 chap nhan contract, doi `listed_year` sang `observed_year` trong request adapter/API contract.
+- TV2: form valuation sau nay dung `observed_year`, khong hien thi nhu nam dang tin.
+- TV5: database da bao toan cac field ML nullable; khong ep NULL thanh gia tri gia.
 
-- TV3: can cung cap cleaned dataset khop schema, dac biet cac cot nam/thoi gian va don vi gia/km.
-- TV1: co the bam vao `model/plumber/schemas/prediction_schema.json` de chuan bi request den R Model API.
-- TV2: co the dung schema de thiet ke form valuation sau nay.
-- TV5: se nhan `predicted_price`, `model_version`, `predicted_at` de tinh smart tag khi sang Increment 3/4.
+### Viec chuyen sang Increment 2
 
-
-BÁO CÁO CHO TV3
-
-Dataset TV3 hiện tại dùng được làm nền, nhưng chưa ổn để train TV4 theo model hiện tại nếu mình vẫn giữ engine_size và origin.
-
-File có:
-brand
-model
-variant
-manufacture_year
-price
-mileage
-fuel_type
-transmission
-body_type
-location
-source_url
-image_url
-listed_at
-crawled_at
-
-
-Đang thiếu so với TV4 hiện tại:
-listed_year
-origin
-engine_size
-seat_count
-
-Trong đó:
-
-- listed_year: không cần bắt TV3 cào thêm, vì có crawled_at rồi. TV4 có thể tự suy ra listed_year = year(crawled_at).
-- origin: nên nhờ TV3 bổ sung nếu muốn giữ model giống bản cũ, ví dụ Domestic / Imported.
-- engine_size: nên nhờ TV3 bổ sung nếu web có thông tin dung tích máy, ví dụ 1.5, 2.0, 2.4; xe điện có thể để 0 hoặc NA rồi TV4 xử lý.
-- seat_count: cũng nên bổ sung, vì model hiện tại đang required và feature này khá có ích cho xe 5 chỗ/7 chỗ.
-Ngoài thiếu cột, mình thấy vài vấn đề data quality cần nói TV3:
-- Có 10813 dòng, khá ổn về số lượng.
-- mileage thiếu khá nhiều, khoảng vài nghìn dòng; cần thống nhất để trống là NA hay cố crawl/bổ sung.
-- Có outlier: price min 5,000,000, max 33,000,000,000; cần lọc giá quá thấp/quá cao.
-- Có 68 xe giá dưới 50 triệu, 5 xe giá trên 15 tỷ.
-- manufacture_year có 11 dòng trước năm 1990.
-- mileage có max 3,380,000,000, chắc chắn lỗi parse.
-- transmission có Semi-Automatic và Other, trong khi schema TV4 hiện chỉ có Automatic, Manual, CVT.
-- fuel_type có Other 1 dòng, cần map hoặc loại.
-- CSV đang có dấu tiếng Việt bị mojibake khi đọc bằng R/PowerShell; JSON ổn hơn. Nên nhờ TV3 đảm bảo CSV xuất chuẩn UTF-8.
-Tin nhắn bạn có thể gửi TV3:
-Dataset cleaned hiện đã có các cột lõi như brand, model, manufacture_year, price, mileage, fuel_type, transmission, body_type, location, crawled_at. 
-Bên TV4 có thể tự suy ra listed_year từ crawled_at, nên không cần cào listed_year riêng.
-
-Nhờ TV3 bổ sung thêm nếu cào được:
-
-- origin: Domestic/Imported hoặc Trong nước/Nhập khẩu
-- engine_size: dung tích động cơ, đơn vị lít; xe điện có thể để 0 hoặc NA
-- seat_count: số chỗ ngồi
-
-Ngoài ra cần kiểm tra data quality:
-
-- mileage đang thiếu khá nhiều và có outlier rất lớn
-- price có vài dòng quá thấp/quá cao
-- manufacture_year có vài dòng trước 1990
-- fuel_type/transmission cần chuẩn hóa category, tránh Other nếu không rõ
-- CSV nên xuất UTF-8 để bên R đọc không lỗi dấu
-Kết luận: dataset hiện chưa train chính thức được với TV4 hiện tại vì thiếu origin, engine_size, seat_count. Nhưng không tệ, nền crawler đã có rồi. crawled_at thay được listed_year, cái đó không cần bắt bạn TV3 bổ sung riêng.
+1. Chay EDA va ghi nhan missingness, outlier, distribution theo source/brand/model.
+2. De xuat va xin review policy xu ly missing, outlier, feature selection va train/test split.
+3. Sau khi duoc chap nhan, train model versioned tren dataset that, danh gia hold-out, va moi cong bo metrics/artifact.
+4. Cai R/Rscript va `plumber`, `jsonlite` de chay lai fixture smoke va Plumber runtime test.

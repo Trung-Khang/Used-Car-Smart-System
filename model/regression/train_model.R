@@ -31,7 +31,7 @@ if (has_flag("smoke")) {
 
 if (!file.exists(input_file)) {
   stop(sprintf(
-    "Training dataset not found: %s. Put TV3 cleaned data here or run with --smoke for fixture validation.",
+    "Training dataset not found: %s. Supply the canonical TV3 path with --input or run with --smoke for fixture validation.",
     input_file
   ), call. = FALSE)
 }
