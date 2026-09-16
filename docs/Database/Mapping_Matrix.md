@@ -1,64 +1,43 @@
-# Database Mapping Matrix - Increment 2
+# Database Mapping Matrix - Increment 2, Schema v2.0.1
 
-- **Phiên bản:** 2.0.0
-- **Tác giả:** TV5 (Đồng bộ cùng TV3 & TV1)
-- **Ngày cập nhật:** 14/09/2026
-- **Trạng thái:** Chốt Data Contract & Schema chính thức
+This matrix is the handoff contract from TV3's cleaned 17-field dataset to the PostgreSQL schema and TV1 JPA entities. The source dataset has 10,813 records and does not contain `color`.
 
-Tài liệu này quy định ánh xạ chi tiết giữa **17 trường dữ liệu đầu vào (TV3 Dataset)**, **PostgreSQL Schema (TV5)** và **JPA Entity (TV1)** để đảm bảo tính toàn vẹn dữ liệu trong toàn hệ thống.
+| # | TV3 dataset field | PostgreSQL destination | JPA destination | Nullable | Transform or validation |
+|---:|---|---|---|---|---|
+| 1 | `brand` | `vehicles.brand` VARCHAR(50) | `Vehicle.brand` String | No | Trim; required. |
+| 2 | `model` | `vehicles.model` VARCHAR(50) | `Vehicle.model` String | No | Trim; required. |
+| 3 | `variant` | `vehicles.variant` VARCHAR(100) | `Vehicle.variant` String | Yes | Empty value becomes NULL. |
+| 4 | `manufacture_year` | `vehicles.manufacture_year` INT | `Vehicle.manufactureYear` Integer | No | 1900-2100. |
+| 5 | `price` | `listings.price` NUMERIC(15,2) | `Listing.price` BigDecimal | No | VND; must be greater than zero. |
+| 6 | `mileage` | `listings.mileage` INT | `Listing.mileage` Integer | Yes | km; NULL when absent; otherwise non-negative. |
+| 7 | `fuel_type` | `vehicles.fuel_type` VARCHAR(30) | `Vehicle.fuelType` String | Yes | `Gasoline`, `Diesel`, `Hybrid`, `Electric`, or NULL. |
+| 8 | `transmission` | `vehicles.transmission` VARCHAR(30) | `Vehicle.transmission` String | Yes | `Automatic`, `Manual`, `CVT`, or NULL. |
+| 9 | `body_type` | `vehicles.body_type` VARCHAR(50) | `Vehicle.bodyType` String | Yes | Keep TV3 normalized value; NULL when absent. |
+| 10 | `location` | `listings.location` VARCHAR(100) | `Listing.location` String | Yes | Listing location text. |
+| 11 | `origin` | `vehicles.origin` VARCHAR(50) | `Vehicle.origin` String | Yes | `Domestic`, `Imported`, or NULL. |
+| 12 | `engine_size` | `vehicles.engine_size` DOUBLE PRECISION | `Vehicle.engineSize` Double | Yes | Liters; must be greater than zero when present. |
+| 13 | `seat_count` | `vehicles.seat_count` INT | `Vehicle.seatCount` Integer | Yes | 2-60 when present. |
+| 14 | `source_url` | `listings.source_url` TEXT | `Listing.sourceUrl` String | No | Unique idempotency key. |
+| 15 | `image_url` | `listings.image_url` VARCHAR(500) | `Listing.imageUrl` String | Yes | Primary listing image URL for UI. |
+| 16 | `listed_at` | `listings.listed_at_raw` TEXT | `Listing.listedAtRaw` String | Yes | Preserve source text. Do not invent an absolute date from relative text. |
+| 17 | `crawled_at` | `listings.crawled_at` TIMESTAMPTZ | `Listing.crawledAt` Instant | No | Preserve source UTC offset. |
 
----
+## Database-generated and derived columns
 
-## 1. Bảng Ma trận Ánh xạ (Mapping Matrix)
+| Column | Purpose | JPA mapping |
+|---|---|---|
+| `sources.id`, `vehicles.id`, `listings.id` | BIGSERIAL primary keys | `Long` |
+| `listings.vehicle_id`, `listings.source_id` | BIGINT foreign keys | `Listing.vehicle`, `Listing.source` |
+| `listings.listed_at` | Parsed and verified absolute listing timestamp, if available | `Listing.listedAt` Instant |
+| `listings.created_at`, `listings.updated_at` | Database audit timestamps | `Listing.createdAt`, `Listing.updatedAt` Instant |
+| `vehicles.created_at`, `sources.created_at` | Database audit timestamps | `Vehicle.createdAt`, `Source.createdAt` Instant |
+| `listings.color` | Optional future system field | `Listing.color` String |
 
-| STT | Trường Dataset (TV3) | Bảng & Cột SQL (TV5) | Kiểu PostgreSQL | Entity & Field JPA (TV1) | Kiểu Java | Nullable | Quy tắc Biến đổi & Validation |
-| :-: | :--- | :--- | :--- | :--- | :--- | :-: | :--- |
-| 1 | `brand` | `vehicles.brand` | VARCHAR(50) | `Vehicle.brand` | `String` | **NO** | Uppercase chữ cái đầu, trim khoảng trắng thừa. |
-| 2 | `model` | `vehicles.model` | VARCHAR(50) | `Vehicle.model` | `String` | **NO** | Giữ nguyên chữ gốc, trim khoảng trắng. |
-| 3 | `variant` | `vehicles.variant` | VARCHAR(100) | `Vehicle.variant` | `String` | **YES** | Phiên bản xe. Nếu trống thì để `NULL`. |
-| 4 | `manufacture_year` | `vehicles.manufacture_year` | INT | `Vehicle.manufactureYear` | `Integer` | **NO** | Chuyển thành số nguyên. Ràng buộc `1900 <= year <= 2100`. |
-| 5 | `fuel_type` | `vehicles.fuel_type` | VARCHAR(30) | `Vehicle.fuelType` | `String` / `Enum` | **YES** | Ánh xạ về Enum chuẩn: `Petrol`, `Diesel`, `Hybrid`, `Electric`. Nếu không xác định để `NULL`. |
-| 6 | `transmission` | `vehicles.transmission` | VARCHAR(30) | `Vehicle.transmission` | `String` / `Enum` | **YES** | Ánh xạ về Enum chuẩn: `Automatic`, `Manual`. Nếu không xác định để `NULL`. |
-| 7 | `engine_size` | `vehicles.engine_size` | FLOAT | `Vehicle.engineSize` | `Double` | **YES** | **Trường Enrich**: Đơn vị Lit/cc. Cho phép `NULL` khi nguồn không có. |
-| 8 | `seat_count` | `vehicles.seat_count` | INT | `Vehicle.seatCount` | `Integer` | **YES** | **Trường Enrich**: Số chỗ ngồi (VD: 4, 5, 7). Cho phép `NULL`. |
-| 9 | `origin` | `vehicles.origin` | VARCHAR(50) | `Vehicle.origin` | `String` | **YES** | **Trường Enrich**: Xuất xứ (VD: "Lắp ráp trong nước", "Nhập khẩu"). Cho phép `NULL`. |
-| 10 | `body_type` | `vehicles.body_type` | VARCHAR(50) | `Vehicle.bodyType` | `String` | **YES** | Kiểu dáng xe (Sedan, SUV, Hatchback, Crossover, MPV...). |
-| 11 | `price` | `listings.price` | NUMERIC(15,2) | `Listing.price` | `BigDecimal` | **NO** | Giá rao bán chính thức. Đơn vị: **VND**. Không dùng giá dự đoán ML. |
-| 12 | `mileage` | `listings.mileage` | INT | `Listing.mileage` | `Integer` | **YES** | Số km đã đi. Nếu thiếu hoặc bất thường, lưu `NULL` và đánh cờ. |
-| 13 | `color` | `listings.color` | VARCHAR(30) | `Listing.color` | `String` | **YES** | Màu sắc xe. Chuẩn hóa chuỗi văn bản. |
-| 14 | `location` | `listings.location` | VARCHAR(100) | `Listing.location` | `String` | **YES** | Tỉnh/Thành phố bài đăng rao bán. |
-| 15 | `source_url` | `listings.source_url` | TEXT | `Listing.sourceUrl` | `String` | **NO** | **Khóa duy nhất (`UNIQUE`)**. Dùng để chống trùng lặp khi import lặp. |
-| 16 | `crawled_at` | `listings.crawled_at` | TIMESTAMPTZ | `Listing.crawledAt` | `Instant` / `ZonedDateTime` | **NO** | Thời điểm cào dữ liệu. Bắt buộc bảo toàn múi giờ (UTC). |
-| 17 | `listed_at_raw` | `listings.listed_at_raw` | TEXT | `Listing.listedAtRaw` | `String` | **YES** | Giữ chuỗi thời gian gốc từ nguồn (VD: "2 giờ trước", "14/09/2026"). |
+`color` is intentionally not an input field in the current TV3 dataset. An importer must set it to NULL unless a later, documented source supplies it.
 
----
+## Import identity rules
 
-## 2. Các Trường Khóa & Metadata Sinh Bởi Database (System Columns)
-
-| Bảng SQL | Cột SQL | Kiểu PostgreSQL | Entity & Field JPA | Mới / Khóa | Quy tắc Khóa & Liên kết |
-| :--- | :--- | :--- | :--- | :-: | :--- |
-| `sources` | `id` | SERIAL | `Source.id` | **PK** | Khóa chính tự tăng của nguồn/sàn. |
-| `sources` | `source_name` | VARCHAR(50) | `Source.sourceName` | **UK** | Tên nguồn dữ liệu (VD: Bonbanh, Chotot). |
-| `vehicles` | `id` | SERIAL | `Vehicle.id` | **PK** | Khóa chính tự tăng đại diện cho 1 cấu hình xe. |
-| `listings` | `id` | SERIAL | `Listing.id` | **PK** | Khóa chính tự tăng của bài đăng. |
-| `listings` | `vehicle_id` | INT | `Listing.vehicle` (`@ManyToOne`) | **FK** | Khóa ngoại trỏ đến `vehicles.id`. |
-| `listings` | `source_id` | INT | `Listing.source` (`@ManyToOne`) | **FK** | Khóa ngoại trỏ đến `sources.id`. |
-| `listings` | `listed_at` | TIMESTAMPTZ | `Listing.listedAt` | Attribute | Ngày đăng đã được xác minh/parse từ `listed_at_raw` (cho phép `NULL`). |
-| `listings` | `created_at` | TIMESTAMPTZ | `Listing.createdAt` | Attribute | Thời điểm bản ghi được ghi vào Database (`DEFAULT CURRENT_TIMESTAMP`). |
-
----
-
-## 3. Quy tắc Tích hợp & Xử lý Đặc biệt
-
-1. **Ràng buộc Idempotency (Import Lặp Không Trùng):**
-   - Import pipeline (TV3) thực hiện câu lệnh `UPSERT` dựa trên `source_url`.
-   - Nếu `source_url` đã tồn tại: Cập nhật `price`, `mileage`, `crawled_at`, `updated_at`. KHÔNG chèn thêm dòng mới vào bảng `listings`.
-
-2. **Quy tắc Liên kết Cấu hình Xe (`vehicles`):**
-   - Khi import một listing mới, tìm kiếm cấu hình khớp bộ khóa `(brand, model, variant, manufacture_year, fuel_type, transmission, engine_size)`.
-   - Nếu đã có `vehicle` tương ứng $\rightarrow$ lấy `vehicle_id` gán cho listing.
-   - Nếu chưa có $\rightarrow$ tạo mới 1 dòng trong `vehicles` rồi gán `vehicle_id`.
-
-3. **Chính sách Mất Dữ liệu (Nullable & Enriched Fields):**
-   - Ba trường bổ sung: `origin`, `engine_size`, `seat_count` cho phép giá trị `NULL`.
-   - Backend (TV1) và Machine Learning (TV4) phải xử lý được trường hợp `NULL` mà không làm ngắt kết nối hoặc phát sinh Exception.
+1. Resolve the source from the listing URL domain and upsert `sources` by `source_name`.
+2. Resolve a vehicle configuration using the documented composite attributes: `brand`, `model`, `variant`, `manufacture_year`, `fuel_type`, `transmission`, and `engine_size`. Null-safe comparison is required for nullable attributes.
+3. Insert or update a listing using `source_url` as the idempotency key. On conflict, update mutable market fields such as `price`, `mileage`, `image_url`, `listed_at_raw`, and `crawled_at`.
+4. Store TV3 `listed_at` only in `listed_at_raw`. Populate `listed_at` only after a separate verified parsing rule exists.
