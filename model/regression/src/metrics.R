@@ -48,7 +48,8 @@ write_metrics_report <- function(metrics, output_file, context) {
     "",
     "## Features",
     "",
-    "- vehicle_age = listed_year - manufacture_year",
+    "- observed_year = year(crawled_at) for training data",
+    "- vehicle_age = observed_year - manufacture_year",
     "- mileage_k = mileage / 1000",
     "- engine_non_ev = 0 for Electric, otherwise engine_size",
     "- fuel encoded as categorical with levels Gasoline, Diesel, Hybrid, Electric",
@@ -59,7 +60,8 @@ write_metrics_report <- function(metrics, output_file, context) {
     "## Notes",
     "",
     "- Predicted price is a reference market estimate, not a legal appraisal.",
-    "- Official metrics must be regenerated from TV3 cleaned data before demo."
+    "- Fixture metrics are smoke-test evidence only and are never official demo metrics.",
+    "- Official metrics must be regenerated from TV3 cleaned data after Increment 2 review."
   )
 
   writeLines(lines, output_file, useBytes = TRUE)

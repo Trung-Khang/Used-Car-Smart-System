@@ -5,12 +5,11 @@
   "additionalProperties": true,
   "required": [
     "manufacture_year",
-    "listed_year",
+    "observed_year",
     "mileage",
     "fuel_type",
     "transmission",
     "origin",
-    "engine_size",
     "seat_count"
   ],
   "properties": {
@@ -30,10 +29,10 @@
       "description": "Vehicle production year.",
       "example": 2021
     },
-    "listed_year": {
+    "observed_year": {
       "type": "integer",
       "minimum": 1990,
-      "description": "Year when listing was observed. Used to compute vehicle_age.",
+      "description": "Observation year used to compute vehicle_age. For training it is derived from crawled_at; it is not the seller publication year.",
       "example": 2026
     },
     "listed_month": {
@@ -69,10 +68,10 @@
       "example": "Domestic"
     },
     "engine_size": {
-      "type": "number",
+      "type": ["number", "null"],
       "minimum": 0,
       "maximum": 10,
-      "description": "Engine displacement in liters. Electric vehicles should use 0.",
+      "description": "Engine displacement in liters. Required by regression_v1 for non-Electric vehicles; nullable for Electric vehicles because the source/database preserve it as NULL.",
       "example": 1.5
     },
     "seat_count": {

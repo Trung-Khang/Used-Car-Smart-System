@@ -1,8 +1,8 @@
 # Model Evaluation
 
-Status: waiting for TV3 cleaned dataset.
+Status: no official model or metrics.
 
-Increment 1 prepares the source code, preprocessing contract, training script, evaluation script, and model-service structure. Official model metrics are intentionally not reported yet because they must come from the real cleaned dataset.
+Increment 1 prepares the source code, preprocessing contract, training script, evaluation script, and model-service structure. TV3's real cleaned dataset is available, but official metrics are intentionally not reported until Increment 2 completes EDA and approves how authentic missing values and outliers are handled.
 
 ## Planned Model
 
@@ -13,7 +13,8 @@ Increment 1 prepares the source code, preprocessing contract, training script, e
 
 ## Features
 
-- `vehicle_age = listed_year - manufacture_year`
+- `observed_year = year(crawled_at)`
+- `vehicle_age = observed_year - manufacture_year`
 - `mileage_k = mileage / 1000`
 - `engine_non_ev = 0` for electric cars, otherwise `engine_size`
 - `fuel`
@@ -23,6 +24,6 @@ Increment 1 prepares the source code, preprocessing contract, training script, e
 
 ## Required Next Step
 
-TV3 should provide `model/regression/data/training_data.csv` with the columns documented in `model/plumber/schemas/prediction_schema.json` plus `price` for training.
+Run Increment 2 EDA on `crawler/data/cleaned/vehicles_cleaned.csv`, document feature coverage, choose and review a missing-feature/outlier policy, then create a versioned train/test evaluation. Fixture metrics remain smoke-test evidence only.
 
 Predicted price is a reference market estimate, not a legal appraisal.

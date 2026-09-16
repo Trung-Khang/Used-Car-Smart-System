@@ -10,13 +10,13 @@ Done:
 - Feature contract
 - Preprocessing source
 - Train/test/evaluation scripts
-- Placeholder official metrics/report waiting for TV3 data
+- Placeholder official metrics/report; official training is gated on Increment 2 EDA and missing-feature decisions
 - Plumber API skeleton with `/health` and `/predict`
 - Fixture dataset for smoke testing only
 
 Waiting:
 
-- TV3 cleaned training dataset
+- Approved Increment 2 EDA, missing-feature, outlier, and evaluation decisions
 - Official `regression_v1.rds`
 - Official model metrics regenerated from real data
 - Local R package `plumber` for running the HTTP API
