@@ -8,11 +8,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-/**
- * ===================================================================
- * SERVICE: LISTING SERVICE (TẦNG XỬ LÝ LOGIC TIN ĐĂNG BÁN XE)
- * ===================================================================
- */
 @Service
 public class ListingService {
 
@@ -28,13 +23,11 @@ public class ListingService {
     public List<Listing> getAllListings() {
         return listingRepository.findAll();
     }
-
     // 2. Lấy chi tiết một tin đăng theo ID
     public Listing getListingById(Long id) {
         return listingRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Khong tim thay tin dang voi ID: " + id));
     }
-
     // 3. Thêm mới một tin đăng bán xe
     public Listing createListing(Listing listing) {
         // Kiểm tra xem dòng xe (Vehicle) liên kết có tồn tại hay không
@@ -45,7 +38,6 @@ public class ListingService {
         }
         return listingRepository.save(listing);
     }
-
     // 4. Xóa tin đăng theo ID
     public void deleteListing(Long id) {
         Listing listing = getListingById(id);

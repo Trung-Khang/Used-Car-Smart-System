@@ -6,18 +6,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-/**
- * ===================================================================
- * BỘ XỬ LÝ NGOẠI LỆ TẬP TRUNG (GLOBAL EXCEPTION HANDLER)
- * ===================================================================
- * 
- * - @RestControllerAdvice: Bắt mọi lỗi xảy ra ở bất kỳ Controller nào.
- * - Giúp trả về phản hồi JSON có cấu trúc rõ ràng thay vì trang trắng báo lỗi (Whitelabel Error).
- */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    // 1. Xử lý lỗi Không tìm thấy dữ liệu (HTTP 404 Not Found)
+    // 1. Xử lý lỗi không tìm thấy dữ liệu
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleResourceNotFoundException(
             ResourceNotFoundException ex, HttpServletRequest request) {
@@ -31,7 +23,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
 
-    // 2. Xử lý lỗi Dữ liệu đầu vào không hợp lệ (HTTP 400 Bad Request)
+    // 2. Xử lý lỗi dữ liệu đầu vào không hợp lệ
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorResponse> handleIllegalArgumentException(
             IllegalArgumentException ex, HttpServletRequest request) {
@@ -45,7 +37,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
-    // 3. Xử lý tất cả các lỗi không lường trước được của Server (HTTP 500 Internal Server Error)
+    // 3. Xử lý tất cả các lỗi không lường trước được của Server
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGlobalException(
             Exception ex, HttpServletRequest request) {

@@ -2,21 +2,13 @@ package com.system.exception;
 
 import java.time.LocalDateTime;
 
-/**
- * ===================================================================
- * ĐỐI TƯỢNG PHẢN HỒI LỖI CHUẨN (ERROR RESPONSE DTO)
- * ===================================================================
- * 
- * Giúp trả về cấu trúc lỗi JSON đồng nhất và sạch sẽ cho Frontend (TV2),
- * tránh làm lộ raw stack trace hay lỗi dài dòng của server.
- */
 public class ErrorResponse {
 
-    private int status;             // Mã lỗi HTTP (Ví dụ: 404, 400, 500)
-    private String error;           // Tên loại lỗi (Ví dụ: Not Found, Bad Request)
-    private String message;         // Thông báo lỗi chi tiết dễ hiểu
-    private String path;            // Đường dẫn API bị lỗi
-    private LocalDateTime timestamp;// Thời điểm xảy ra lỗi
+    private int status; 
+    private String error;
+    private String message;    
+    private String path;      
+    private LocalDateTime timestamp;
 
     public ErrorResponse() {
         this.timestamp = LocalDateTime.now();

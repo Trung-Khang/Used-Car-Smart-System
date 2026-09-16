@@ -1,13 +1,6 @@
 # BÁO CÁO TIẾN ĐỘ THÀNH VIÊN 01 (TV1 — BACKEND LEAD)
-
-> **Dự án:** Smart Used-Car Decision Support System  
-> **Giai đoạn:** Increment 1 — Foundation  
-> **Trạng thái:** HOÀN THÀNH 100% INCREMENT 1  
-> **Thời điểm cập nhật:** 08/09/2026  
-
----
-
-## 1. Việc đã hoàn thành
+## INCREMENT 1
+### 1. Việc đã hoàn thành
 
 1. **Khởi tạo và cấu hình nền móng Spring Boot (Java 17):**
    - Đã cấu hình file `pom.xml` với 5 thư viện cốt lõi: Spring Web, Spring Data JPA, PostgreSQL Driver, Springdoc OpenAPI (Swagger UI 2.5.0), Spring Boot Test.
@@ -40,7 +33,7 @@
 
 ---
 
-## 2. Cấu trúc mã nguồn đã sinh ra hoàn chỉnh
+### 2. Cấu trúc mã nguồn
 
 ```text
 backend/
@@ -76,7 +69,7 @@ backend/
 
 ---
 
-## 3. Các file trên được tạo ra để làm gì?
+### 3. Các file trên được tạo ra để làm gì?
 
 - Cung cấp một **hệ thống Backend chạy được hoàn chỉnh (Runnable Skeleton)** cho đồ án.
 - Cung cấp đầy đủ các cổng giao tiếp REST API chuẩn JSON và tài liệu Swagger UI trực quan.
@@ -85,7 +78,7 @@ backend/
 
 ---
 
-## 4. Bàn giao cho ai?
+### 4. Bàn giao cho ai?
 
 - **TV2 (Frontend):** 
   - Đã có đầy đủ URL endpoints (`/api/v1/vehicles`, `/api/v1/listings`) để gọi lấy danh sách và thêm mới xe.
@@ -97,14 +90,7 @@ backend/
 
 ---
 
-## 5. Còn thiếu hay cần fix / bổ sung gì nữa không?
-
-- **Increment 1 đã hoàn thành trọn vẹn 100%.**
-- **Chuẩn bị cho Increment 2:** Xây dựng API Tìm kiếm và Lọc nâng cao (Search & Filter đa tiêu chí kèm phân trang `Pageable` và sắp xếp `Sort`) khi TV3 import dữ liệu lớn vào CSDL.
-
----
-
-## 6. Cách thức và thao tác Run / Debug / Test thử
+### 5. Cách thức và thao tác Run / Debug / Test thử
 
 1. **Chuẩn bị Database trong PostgreSQL:**
    - Mở pgAdmin hoặc SQL Shell (psql), chạy lệnh tạo database:
@@ -123,7 +109,63 @@ backend/
 
 ---
 
-## 7. Chú ý / Ghi chú
+## EMERGENCY MISSiON (16/9/2026)
+### 1. Việc đã hoàn thành 
+- **Tạo mới Source.java & SourceRepository.java: Map chính xác bảng sources theo Schema v2.0.0.**
+- **Cập nhật Vehicle.java: Bổ sung đầy đủ 3 trường Enrich (engineSize, seatCount, origin), đồng bộ kiểu thời gian Instant (TIMESTAMPTZ), các ràng buộc độ dài cột khớp DDL.**
+- **Cập nhật Listing.java: Đổi sourceId thành quan hệ @ManyToOne Source source, bổ sung color, listedAtRaw, kiểu Instant, cho phép mileage nullable, bảo toàn imageUrl.**
+- **Kích hoạt ddl-auto=validate: Cập nhật cấu hình trong application.properties để chứng minh tính toàn vẹn 100% giữa JPA và PostgreSQL.**
 
-- Đảm bảo PostgreSQL service đang chạy trước khi khởi động Spring Boot.
-- Mọi dữ liệu trả về đều theo chuẩn mã UTF-8 và định dạng JSON.
+### 2. Cấu trúc mã nguồn 
+```text
+backend/
+├── pom.xml                                               # Quản lý dependencies (Spring Web, JPA, PostgreSQL, Swagger...)
+├── mvnw.cmd                                              # Maven Wrapper khởi chạy trên Windows
+├── .mvn/wrapper/maven-wrapper.properties                 # Cấu hình tải phiên bản Maven
+└── src/
+    └── main/
+        ├── resources/
+        │   └── application.properties                    # Cấu hình: Port 8080, PostgreSQL, ddl-auto=validate, Swagger
+        └── java/com/system/
+            │
+            ├── BackendApplication.java                   # [1] Class khởi chạy chính (@SpringBootApplication)
+            │
+            ├── config/                                   # [2] TẦNG CẤU HÌNH HỆ THỐNG
+            │   ├── CorsConfig.java                       # Cấu hình CORS mở cổng kết nối cho Frontend (React 5173/3000)
+            │   └── OpenApiConfig.java                    # Cấu hình tiêu đề, mô tả và metadata cho Swagger UI
+            │
+            ├── entity/                                   # [3] TẦNG THỰC THỂ CSDL (JPA ENTITIES)
+            │   ├── Source.java                           # [NEW] Đại diện bảng sources (Nguồn cào: Chợ Tốt, Bốn Bánh)
+            │   ├── Vehicle.java                          # [UPDATED] Đại diện bảng vehicles (+3 trường enrich)
+            │   └── Listing.java                          # [UPDATED] Đại diện bảng listings (Liên kết Vehicle & Source)
+            │
+            ├── repository/                               # [4] TẦNG THAO TÁC CƠ SỞ DỮ LIỆU (SPRING DATA JPA)
+            │   ├── SourceRepository.java                 # [NEW] Truy vấn bảng sources (findBySourceName)
+            │   ├── VehicleRepository.java                # Truy vấn bảng vehicles (findByBrand, findByModel)
+            │   └── ListingRepository.java                # Truy vấn bảng listings (findByVehicleId, findByLocation)
+            │
+            ├── service/                                  # [5] TẦNG NGHIỆP VỤ (BUSINESS LOGIC LAYER)
+            │   ├── VehicleService.java                   # Logic CRUD, kiểm tra tồn tại và xử lý dữ liệu dòng xe
+            │   └── ListingService.java                   # Logic CRUD tin đăng, liên kết xe và nguồn bài viết
+            │
+            ├── controller/                               # [6] TẦNG ĐIỀU KHIỂN REST API (REST CONTROLLERS)
+            │   ├── VehicleController.java                # Endpoint /api/v1/vehicles (CRUD dòng xe + Swagger doc)
+            │   └── ListingController.java                # Endpoint /api/v1/listings (CRUD tin đăng + Swagger doc)
+            │
+            └── exception/                                # [7] TẦNG XỬ LÝ NGOẠI LỆ TẬP TRUNG
+                ├── ErrorResponse.java                    # DTO chuẩn hóa cấu trúc JSON phản hồi lỗi
+                ├── ResourceNotFoundException.java        # Exception báo lỗi khi không tìm thấy ID (HTTP 404)
+                └── GlobalExceptionHandler.java           # @RestControllerAdvice bắt lỗi toàn cục (404, 400, 500)
+```
+
+### 3. Các file trên được tạo ra để làm gì?
+Tạo ra một Backend hoàn chỉnh (Runnable Skeleton), kết nối mượt mà với PostgreSQL của TV5 và cung cấp sẵn API chuẩn cho Frontend của TV2.
+
+### 4. Bàn giao cho ai?
+- Quy trình kiểm thử Giai đoạn 4 khi TV3 chạy seed CSDL.
+- Kế hoạch xây dựng API Search / Filter động (JPA Specification), phân trang (Pageable), sắp xếp (Sort) và DTO phẳng cho Increment 2.
+
+### 5. Cách thức và thao tác Run / Debug / Test thử
+- Chạy lệnh mvn clean compile bằng OpenJDK 21 đạt BUILD SUCCESS (16 files compiled sạch sẽ).
+
+---

@@ -10,11 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- * ===================================================================
- * CONTROLLER: LISTING CONTROLLER (REST API QUẢN LÝ TIN ĐĂNG BÁN XE)
- * ===================================================================
- */
 @RestController
 @RequestMapping("/api/v1/listings")
 @Tag(name = "2. Listing API", description = "Các API quản lý tin đăng rao bán xe trên thị trường")
@@ -26,7 +21,7 @@ public class ListingController {
         this.listingService = listingService;
     }
 
-    // 1. GET: Lấy danh sách tin đăng (Hỗ trợ lọc theo vehicleId nếu có)
+    // 1. GET: Lấy danh sách tin đăng
     @GetMapping
     @Operation(summary = "Lấy danh sách tất cả tin đăng xe", description = "Trả về danh sách các tin rao bán xe thực tế")
     public ResponseEntity<List<Listing>> getAllListings(

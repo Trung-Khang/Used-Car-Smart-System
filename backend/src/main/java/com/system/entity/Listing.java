@@ -2,94 +2,106 @@ package com.system.entity;
 
 import jakarta.persistence.*;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.Instant;
 
-/**
- * ===================================================================
- * ENTITY: LISTING (BẢNG: listings)
- * ===================================================================
- * 
- * Đại diện cho một tin đăng rao bán xe thực tế trên thị trường (Chợ Tốt, v.v.).
- * - @Entity: Khai báo bảng CSDL.
- * - @Table(name = "listings"): Tên bảng trong PostgreSQL là "listings".
- */
 @Entity
 @Table(name = "listings")
 public class Listing {
 
-    // 1. Khóa chính (Primary Key), tự động tăng ID
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // 2. Khóa ngoại liên kết với bảng "vehicles" (Quan hệ: Nhiều tin đăng có thể thuộc về 1 dòng xe)
+    // Khóa ngoại liên kết với bảng "vehicles"
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "vehicle_id", nullable = false)
     private Vehicle vehicle;
 
-    // 3. Giá rao bán thực tế của người bán (Đơn vị: VNĐ, dùng BigDecimal để tính toán tiền tệ chính xác)
+    // Khóa ngoại liên kết với bảng "sources" (Nguồn cào: Chotot, Bonbanh...)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "source_id", nullable = false)
+    private Source source;
+
+    // Giá rao bán thực tế của người bán (VND)
     @Column(name = "price", nullable = false, precision = 15, scale = 2)
     private BigDecimal price;
 
-    // 4. Số km đã đi (ODO - Mileage)
-    @Column(name = "mileage", nullable = false)
+    // Số km đã đi (ODO) - Nullable
+    @Column(name = "mileage")
     private Integer mileage;
 
-    // 5. Khu vực / Tỉnh thành rao bán (Ví dụ: TP.HCM, Hà Nội, Đà Nẵng...)
+    // Màu sắc xe
+    @Column(name = "color", length = 30)
+    private String color;
+
+    // Khu vực / Tỉnh thành rao bán
     @Column(name = "location", length = 100)
     private String location;
 
-    // 6. ID của nguồn cào dữ liệu (Khóa ngoại tới bảng sources)
-    @Column(name = "source_id")
-    private Long sourceId;
-
-    // 7. Đường dẫn (URL) tới bài viết gốc trên sàn xe cũ
-    @Column(name = "source_url", length = 500)
+    // Đường dẫn bài viết gốc (Khóa duy nhất UNIQUE để chống trùng lặp)
+    @Column(name = "source_url", nullable = false, unique = true, columnDefinition = "TEXT")
     private String sourceUrl;
 
-    // 8. Đường dẫn ảnh đại diện của xe
+    // Đường dẫn ảnh đại diện của xe phục vụ hiển thị UI
     @Column(name = "image_url", length = 500)
     private String imageUrl;
 
-    // 9. Thời gian bài viết được đăng lên sàn rao vặt
+    // Chuỗi thời gian gốc từ nguồn (VD: "2 giờ trước", "14/09/2026")
+    @Column(name = "listed_at_raw", columnDefinition = "TEXT")
+    private String listedAtRaw;
+
+    // Thời gian đăng tin đã được xác minh/chuẩn hóa (nếu có)
     @Column(name = "listed_at")
-    private LocalDateTime listedAt;
+    private Instant listedAt;
 
-    // 10. Thời gian hệ thống (TV3) cào dữ liệu về
-    @Column(name = "crawled_at")
-    private LocalDateTime crawledAt;
+    // Thời gian hệ thống cào dữ liệu về (bảo toàn múi giờ)
+    @Column(name = "crawled_at", nullable = false)
+    private Instant crawledAt;
 
-    // 11. Thời gian tạo bản ghi trong Database
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
+    // Thời gian tạo bản ghi trong Database
+    @Column(name = "created_at", nullable = false)
+    private Instant createdAt;
 
-    // ---------------------------------------------------------------
-    // CONSTRUCTORS (HÀM KHỞI TẠO)
-    // ---------------------------------------------------------------
+    // Thời gian cập nhật bản ghi gần nhất
+    @Column(name = "updated_at", nullable = false)
+    private Instant updatedAt;
+
     public Listing() {
     }
 
-    public Listing(Vehicle vehicle, BigDecimal price, Integer mileage, String location, 
-                   String sourceUrl, String imageUrl, LocalDateTime listedAt) {
+    public Listing(Vehicle vehicle, Source source, BigDecimal price, Integer mileage, 
+                   String location, String sourceUrl, String imageUrl, Instant crawledAt) {
         this.vehicle = vehicle;
+        this.source = source;
         this.price = price;
         this.mileage = mileage;
         this.location = location;
         this.sourceUrl = sourceUrl;
         this.imageUrl = imageUrl;
-        this.listedAt = listedAt;
+        this.crawledAt = crawledAt;
     }
 
     @PrePersist
     protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
+        Instant now = Instant.now();
+        if (this.createdAt == null) {
+            this.createdAt = now;
+        }
+        if (this.updatedAt == null) {
+            this.updatedAt = now;
+        }
         if (this.crawledAt == null) {
-            this.crawledAt = LocalDateTime.now();
+            this.crawledAt = now;
         }
     }
 
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = Instant.now();
+    }
+
     // ---------------------------------------------------------------
-    // GETTERS & SETTERS (ĐỌC VÀ GHI DỮ LIỆU)
+    // GETTERS & SETTERS
     // ---------------------------------------------------------------
     public Long getId() {
         return id;
@@ -105,6 +117,14 @@ public class Listing {
 
     public void setVehicle(Vehicle vehicle) {
         this.vehicle = vehicle;
+    }
+
+    public Source getSource() {
+        return source;
+    }
+
+    public void setSource(Source source) {
+        this.source = source;
     }
 
     public BigDecimal getPrice() {
@@ -123,20 +143,20 @@ public class Listing {
         this.mileage = mileage;
     }
 
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
+
     public String getLocation() {
         return location;
     }
 
     public void setLocation(String location) {
         this.location = location;
-    }
-
-    public Long getSourceId() {
-        return sourceId;
-    }
-
-    public void setSourceId(Long sourceId) {
-        this.sourceId = sourceId;
     }
 
     public String getSourceUrl() {
@@ -155,27 +175,43 @@ public class Listing {
         this.imageUrl = imageUrl;
     }
 
-    public LocalDateTime getListedAt() {
+    public String getListedAtRaw() {
+        return listedAtRaw;
+    }
+
+    public void setListedAtRaw(String listedAtRaw) {
+        this.listedAtRaw = listedAtRaw;
+    }
+
+    public Instant getListedAt() {
         return listedAt;
     }
 
-    public void setListedAt(LocalDateTime listedAt) {
+    public void setListedAt(Instant listedAt) {
         this.listedAt = listedAt;
     }
 
-    public LocalDateTime getCrawledAt() {
+    public Instant getCrawledAt() {
         return crawledAt;
     }
 
-    public void setCrawledAt(LocalDateTime crawledAt) {
+    public void setCrawledAt(Instant crawledAt) {
         this.crawledAt = crawledAt;
     }
 
-    public LocalDateTime getCreatedAt() {
+    public Instant getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
+    public void setCreatedAt(Instant createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public Instant getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Instant updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

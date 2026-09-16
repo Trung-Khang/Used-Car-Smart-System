@@ -10,15 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- * ===================================================================
- * CONTROLLER: VEHICLE CONTROLLER (REST API QUẢN LÝ XE)
- * ===================================================================
- * 
- * - @RestController: Đánh dấu class này là Controller trả về dữ liệu dạng JSON.
- * - @RequestMapping("/api/v1/vehicles"): Tiền tố đường dẫn cho toàn bộ API trong class này.
- * - @Tag: Đặt tên nhóm API trên giao diện Swagger UI.
- */
 @RestController
 @RequestMapping("/api/v1/vehicles")
 @Tag(name = "1. Vehicle API", description = "Các API quản lý thông tin dòng xe (CRUD cơ bản)")
@@ -26,7 +17,6 @@ public class VehicleController {
 
     private final VehicleService vehicleService;
 
-    // Tiêm (Inject) VehicleService vào Controller
     public VehicleController(VehicleService vehicleService) {
         this.vehicleService = vehicleService;
     }

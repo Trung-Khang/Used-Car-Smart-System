@@ -6,14 +6,6 @@ import io.swagger.v3.oas.models.info.Info;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-/**
- * ===================================================================
- * CẤU HÌNH THÔNG TIN CHO TRANG SWAGGER / OPENAPI UI
- * ===================================================================
- * 
- * - Giúp trang Swagger hiển thị tiêu đề, mô tả và thông tin nhóm đồ án
- *   chuyên nghiệp khi giảng viên hoặc bạn TV2 vào xem.
- */
 @Configuration
 public class OpenApiConfig {
 
