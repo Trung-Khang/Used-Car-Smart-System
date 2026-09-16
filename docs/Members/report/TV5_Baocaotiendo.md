@@ -837,3 +837,61 @@ Testing
 ```
 
 Trong các Increment tiếp theo, Member 05 sẽ chuyển trọng tâm từ **thiết kế nền tảng** sang **Database Testing → Integration Testing → Recommendation / Comparison / Decision Support**.
+
+# Báo cáo Tiến độ Nhiệm vụ Emergency Mission
+
+- **Họ và tên:** [Đỗ Trọng Khôi]
+- **Vai trò:** TV5 - Quản trị Database Schema & Tích hợp Dữ liệu
+- **Nhiệm vụ:** Chủ trì thiết kế PostgreSQL Schema chính thức, ERD, Data Dictionary, Mapping Matrix và hỗ trợ nghiệm thu tích hợp Increment 2
+- **Ngày cập nhật:** 15/09/2026
+
+---
+
+## 1. Tổng quan Tiến độ Nhiệm vụ (Emergency Mission)
+
+| Giai đoạn | Nhiệm vụ chính | Trạng thái | Sản phẩm bàn giao / Bằng chứng |
+| :-: | :--- | :-: | :--- |
+| **Giai đoạn 0** | Nhận trách nhiệm sở hữu schema chính thức | **HOÀN THÀNH** | Khảo sát SQL cũ, JPA Entity và Dataset thô |
+| **Giai đoạn 2** | Thống nhất Schema v2.0, ERD, Dictionary, Mapping | **HOÀN THÀNH** | PR/Commit: `schema.sql`, `ERD.md`, `Data_Dictionary.md`, `Mapping_Matrix.md` |
+| **Giai đoạn 4** | Triển khai DB kiểm thử, phối hợp nghiệm thu Import & API | **SẴN SÀNG** | Báo cáo tích hợp `reports/Integration_Test_Report.md` |
+
+---
+
+## 2. Các công việc chi tiết đã hoàn thành
+
+### 2.1 Chuẩn hóa & Khóa Database Schema v2.0
+- Giải quyết triệt để sự chênh lệch giữa SQL cũ (`vehicle`, `make`, `year`) và JPA Entity (`vehicles`, `listings`, `brand`, `manufacture_year`).
+- Thiết kế mô hình 3 bảng chuẩn hóa: `sources`, `vehicles`, `listings`.
+- Đảm bảo giữ đủ **100% (17/17 trường)** từ Data Contract của TV3, đặc biệt bảo toàn 3 trường enrich: `origin`, `engine_size`, `seat_count`.
+
+### 2.2 Ban hành Bộ tài liệu Thiết kế Chuẩn (Single Source of Truth)
+- **`database/schema/schema.sql`**: Khởi tạo DDL PostgreSQL, thiết lập khóa chính, khóa ngoại (`ON DELETE RESTRICT`), ràng buộc `CHECK (manufacture_year)` và `UNIQUE(source_url)`.
+- **`docs/Database/ERD/ERD.md`**: Vẽ sơ đồ Mermaid ERD và định nghĩa quy tắc định danh `vehicles`.
+- **`docs/Database/Data_Dictionary.md`**: Mô tả chi tiết kiểu dữ liệu, quy tắc null, đơn vị tính và các chỉ mục (Indexes) tối ưu truy vấn.
+- **`docs/Database/Mapping_Matrix.md`**: Ánh xạ rõ ràng từng trường từ Dataset thô $\rightarrow$ PostgreSQL $\rightarrow$ JPA Entity.
+
+### 2.3 Thiết lập Ràng buộc Idempotency & Tối ưu hóa Truy vấn
+- Thêm ràng buộc `UNIQUE` trên trường `listings.source_url` giúp TV3 triển khai cơ chế `UPSERT` (tránh trùng lặp khi import lại cùng dataset).
+- Khởi tạo 4 Indexes chiến lược (`idx_listings_price`, `idx_listings_crawled_at`, `idx_listings_vehicle_id`, `idx_vehicles_search`) để hỗ trợ TV1 triển khai API Search/Filter/Paging/Sorting.
+
+---
+
+## 3. Quyết định Kiến trúc Database (Architectural Decision Notes)
+
+1. **Xử lý `listed_at`:**
+   - Tạo cột `listed_at_raw` (TEXT) để lưu văn bản gốc chưa chuẩn hóa (VD: "2 giờ trước").
+   - Tạo cột `listed_at` (TIMESTAMPTZ, Nullable) để lưu thời gian đã parse/xác minh.
+   - Bắt buộc `crawled_at` (TIMESTAMPTZ, NOT NULL) để làm mốc quan sát chuẩn theo múi giờ UTC.
+
+2. **Quy tắc định danh dòng `vehicles`:**
+   - 1 dòng trong `vehicles` đóng vai trò là một cấu hình kỹ thuật xe quan sát được.
+   - Việc liên kết listing mới dựa trên bộ khóa tổ hợp: `(brand, model, variant, manufacture_year, fuel_type, transmission, engine_size)`.
+
+---
+
+## 4. Bàn giao & Kế hoạch tiếp theo
+- **Đã bàn giao:** Schema v2.0 cho TV1 (đồng bộ Entity JPA) và TV3 (sửa script `import_pipeline.py`).
+- **Nhiệm vụ tiếp theo (Giai đoạn 4):**
+  1. Hỗ trợ TV3 chạy import toàn bộ 10,813 bản ghi lên Database kiểm thử.
+  2. Xác nhận log kết quả Hibernate `ddl-auto=validate` với TV1.
+  3. Tổng hợp số liệu thực tế gửi Leader nghiệm thu toàn bộ Increment 2.
