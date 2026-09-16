@@ -7,19 +7,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-/**
- * ===================================================================
- * SERVICE: VEHICLE SERVICE (TẦNG XỬ LÝ LOGIC XE)
- * ===================================================================
- * 
- * - @Service: Đánh dấu class này là Service (chứa nghiệp vụ) của Spring Boot.
- * - Đóng vai trò làm "đầu bếp": Nhận yêu cầu từ Controller -> gọi Repository
- *   để lấy hoặc lưu dữ liệu -> xử lý logic và trả về kết quả.
- */
 @Service
 public class VehicleService {
 
-    // Tiêm (Inject) VehicleRepository vào để sử dụng
     private final VehicleRepository vehicleRepository;
 
     public VehicleService(VehicleRepository vehicleRepository) {

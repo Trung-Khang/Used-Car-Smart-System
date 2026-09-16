@@ -1,61 +1,52 @@
 package com.system.entity;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
+import java.time.Instant;
 
-/**
- * ===================================================================
- * ENTITY: VEHICLE (BẢNG: vehicles)
- * ===================================================================
- * 
- * Đại diện cho thông tin kỹ thuật gốc của một dòng xe.
- * - @Entity: Báo cho Spring Data JPA / Hibernate biết đây là một bảng CSDL.
- * - @Table(name = "vehicles"): Tên bảng trong PostgreSQL là "vehicles".
- */
 @Entity
 @Table(name = "vehicles")
 public class Vehicle {
 
-    // 1. Khóa chính (Primary Key), tự động tăng ID (1, 2, 3...)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // 2. Hãng xe (Ví dụ: Toyota, Honda, Mazda, Hyundai, Kia...)
-    @Column(name = "brand", nullable = false, length = 100)
+    @Column(name = "brand", nullable = false, length = 50)
     private String brand;
 
-    // 3. Dòng xe (Ví dụ: Vios, City, CX-5, Accent, Morning...)
-    @Column(name = "model", nullable = false, length = 100)
+    @Column(name = "model", nullable = false, length = 50)
     private String model;
 
-    // 4. Phiên bản (Ví dụ: 1.5G, 2.0 Premium, 1.4 AT...)
     @Column(name = "variant", length = 100)
     private String variant;
 
-    // 5. Năm sản xuất (Ví dụ: 2020, 2021, 2022...)
     @Column(name = "manufacture_year", nullable = false)
     private Integer manufactureYear;
 
-    // 6. Kiểu dáng xe (Ví dụ: Sedan, SUV, Hatchback, Crossover, CUV...)
+    @Column(name = "fuel_type", length = 30)
+    private String fuelType;
+
+    @Column(name = "transmission", length = 30)
+    private String transmission;
+
+    // Trường Enrich: Dung tích xi lanh (L)
+    @Column(name = "engine_size")
+    private Double engineSize;
+
+    // Trường Enrich: Số chỗ ngồi
+    @Column(name = "seat_count")
+    private Integer seatCount;
+
+    // Trường Enrich: Xuất xứ (Lắp ráp trong nước / Nhập khẩu)
+    @Column(name = "origin", length = 50)
+    private String origin;
+
     @Column(name = "body_type", length = 50)
     private String bodyType;
 
-    // 7. Loại nhiên liệu (Ví dụ: Gasoline / Xang, Diesel / Dau, Hybrid, Electric / Dien)
-    @Column(name = "fuel_type", length = 50)
-    private String fuelType;
+    @Column(name = "created_at", nullable = false)
+    private Instant createdAt;
 
-    // 8. Hộp số (Ví dụ: Automatic / Tu dong, Manual / So san)
-    @Column(name = "transmission", length = 50)
-    private String transmission;
-
-    // 9. Thời gian tạo bản ghi trong hệ thống
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
-
-    // ---------------------------------------------------------------
-    // CONSTRUCTORS (HÀM KHỞI TẠO)
-    // ---------------------------------------------------------------
     public Vehicle() {
     }
 
@@ -70,14 +61,30 @@ public class Vehicle {
         this.transmission = transmission;
     }
 
-    // Tự động gán thời gian hiện tại khi thêm mới bản ghi
+    public Vehicle(String brand, String model, String variant, Integer manufactureYear, 
+                   String fuelType, String transmission, Double engineSize, 
+                   Integer seatCount, String origin, String bodyType) {
+        this.brand = brand;
+        this.model = model;
+        this.variant = variant;
+        this.manufactureYear = manufactureYear;
+        this.fuelType = fuelType;
+        this.transmission = transmission;
+        this.engineSize = engineSize;
+        this.seatCount = seatCount;
+        this.origin = origin;
+        this.bodyType = bodyType;
+    }
+
     @PrePersist
     protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
+        if (this.createdAt == null) {
+            this.createdAt = Instant.now();
+        }
     }
 
     // ---------------------------------------------------------------
-    // GETTERS & SETTERS (ĐỌC VÀ GHI DỮ LIỆU)
+    // GETTERS & SETTERS
     // ---------------------------------------------------------------
     public Long getId() {
         return id;
@@ -119,14 +126,6 @@ public class Vehicle {
         this.manufactureYear = manufactureYear;
     }
 
-    public String getBodyType() {
-        return bodyType;
-    }
-
-    public void setBodyType(String bodyType) {
-        this.bodyType = bodyType;
-    }
-
     public String getFuelType() {
         return fuelType;
     }
@@ -143,11 +142,43 @@ public class Vehicle {
         this.transmission = transmission;
     }
 
-    public LocalDateTime getCreatedAt() {
+    public Double getEngineSize() {
+        return engineSize;
+    }
+
+    public void setEngineSize(Double engineSize) {
+        this.engineSize = engineSize;
+    }
+
+    public Integer getSeatCount() {
+        return seatCount;
+    }
+
+    public void setSeatCount(Integer seatCount) {
+        this.seatCount = seatCount;
+    }
+
+    public String getOrigin() {
+        return origin;
+    }
+
+    public void setOrigin(String origin) {
+        this.origin = origin;
+    }
+
+    public String getBodyType() {
+        return bodyType;
+    }
+
+    public void setBodyType(String bodyType) {
+        this.bodyType = bodyType;
+    }
+
+    public Instant getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
+    public void setCreatedAt(Instant createdAt) {
         this.createdAt = createdAt;
     }
 }

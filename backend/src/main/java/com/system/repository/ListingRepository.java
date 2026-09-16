@@ -6,13 +6,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-/**
- * ===================================================================
- * REPOSITORY: LISTING REPOSITORY (THAO TÁC BẢNG listings)
- * ===================================================================
- * 
- * - Tự động có sẵn các hàm: findAll(), findById(), save(), deleteById().
- */
 @Repository
 public interface ListingRepository extends JpaRepository<Listing, Long> {
 
