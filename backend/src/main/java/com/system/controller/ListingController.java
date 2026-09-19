@@ -1,14 +1,19 @@
 package com.system.controller;
 
+import com.system.dto.ListingFilterRequest;
+import com.system.dto.ListingResponseDto;
+import com.system.dto.PageResponse;
 import com.system.entity.Listing;
 import com.system.service.ListingService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/listings")
@@ -21,23 +26,23 @@ public class ListingController {
         this.listingService = listingService;
     }
 
-    // 1. GET: Lấy danh sách tin đăng
+    // 1. GET: Lấy danh sách tin đăng có tìm kiếm, lọc, phân trang và sắp xếp
     @GetMapping
-    @Operation(summary = "Lấy danh sách tất cả tin đăng xe", description = "Trả về danh sách các tin rao bán xe thực tế")
-    public ResponseEntity<List<Listing>> getAllListings(
-            @RequestParam(required = false) Long vehicleId) {
-        if (vehicleId != null) {
-            return ResponseEntity.ok(listingService.getListingsByVehicleId(vehicleId));
-        }
-        return ResponseEntity.ok(listingService.getAllListings());
+    @Operation(summary = "Tìm kiếm & Lọc tin đăng xe",
+               description = "Tìm kiếm và lọc tin đăng theo nhiều tiêu chí (hãng, dòng xe, khoảng giá, năm sản xuất, ODO, nhiên liệu...), hỗ trợ phân trang (page, size) và sắp xếp (sort=price,asc...)")
+    public ResponseEntity<PageResponse<ListingResponseDto>> getAllListings(
+            @ParameterObject ListingFilterRequest filter,
+            @ParameterObject @PageableDefault(page = 0, size = 20, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        PageResponse<ListingResponseDto> response = listingService.searchListings(filter, pageable);
+        return ResponseEntity.ok(response);
     }
 
     // 2. GET /{id}: Lấy chi tiết tin đăng theo ID
     @GetMapping("/{id}")
-    @Operation(summary = "Lấy chi tiết tin đăng theo ID", description = "Nhận vào ID tin đăng và trả về thông tin chi tiết kèm thông số xe")
-    public ResponseEntity<Listing> getListingById(@PathVariable Long id) {
-        Listing listing = listingService.getListingById(id);
-        return ResponseEntity.ok(listing);
+    @Operation(summary = "Lấy chi tiết tin đăng theo ID", description = "Nhận vào ID tin đăng và trả về thông tin chi tiết kèm thông số xe dạng phẳng DTO")
+    public ResponseEntity<ListingResponseDto> getListingById(@PathVariable Long id) {
+        ListingResponseDto dto = listingService.getListingDtoById(id);
+        return ResponseEntity.ok(dto);
     }
 
     // 3. POST: Thêm mới một tin đăng bán xe

@@ -169,3 +169,51 @@ Tạo ra một Backend hoàn chỉnh (Runnable Skeleton), kết nối mượt m�
 - Chạy lệnh mvn clean compile bằng OpenJDK 21 đạt BUILD SUCCESS (16 files compiled sạch sẽ).
 
 ---
+
+## INCREMENT 2 — MARKET DATA API (19/09/2026)
+
+### 1. Việc đã hoàn thành
+1. **Kiểm chứng toàn vẹn CSDL với Hibernate `ddl-auto=validate`:**
+   - Đã khởi động ngữ cảnh Spring Boot kết nối trực tiếp vào PostgreSQL `used_car_db` (Schema v2.0.1).
+   - Hibernate 6.4.4 xác thực thành công 100% các thực thể JPA (`Vehicle`, `Listing`, `Source`) với Schema DB, không có lỗi sai lệch cấu trúc (0 failures, 0 errors).
+2. **Xây dựng tầng DTO phẳng phục vụ hiển thị (DTO Layer):**
+   - `ListingResponseDto.java`: Gộp phẳng các trường từ `Listing` + `Vehicle` + `Source`.
+   - `ListingFilterRequest.java`: Đóng gói các tham số lọc đa tiêu chí (`keyword`, `brand`, `model`, `minPrice`, `maxPrice`, `minYear`, `maxYear`, `minMileage`, `maxMileage`, `fuelType`, `transmission`, `bodyType`, `origin`, `location`, `vehicleId`).
+   - `PageResponse.java`: Chuẩn hóa cấu trúc phân trang trả về cho Client (`content`, `page`, `size`, `totalElements`, `totalPages`, `isFirst`, `isLast`).
+3. **Triển khai truy vấn động JPA Criteria (Specification Layer):**
+   - `ListingRepository.java`: Kế thừa thêm `JpaSpecificationExecutor<Listing>`.
+   - `ListingSpecification.java`: Xây dựng query Criteria động với LEFT JOIN sang `Vehicle`, hỗ trợ lọc linh hoạt và an toàn khi các trường dữ liệu tùy chọn là `null`.
+4. **Nâng cấp Service & Controller REST API:**
+   - `ListingService.java`: Bổ sung `searchListings(ListingFilterRequest, Pageable)` và `getListingDtoById(Long)`.
+   - `ListingController.java`: Cập nhật endpoint `GET /api/v1/listings` nhận `@ParameterObject` filter và `@PageableDefault(size=20, sort="id", direction=DESC)`.
+
+### 2. Cấu trúc mã nguồn bổ sung
+```text
+backend/
+└── src/main/java/com/system/
+    ├── dto/
+    │   ├── ListingFilterRequest.java       # DTO nhận tiêu chí tìm kiếm & lọc
+    │   ├── ListingResponseDto.java        # DTO phẳng trả về cho Frontend
+    │   └── PageResponse.java              # DTO bọc dữ liệu phân trang
+    ├── specification/
+    │   └── ListingSpecification.java      # JPA Criteria Specification động
+    ├── repository/│   │   └── ListingRepository.java         # [+JpaSpecificationExecutor]
+    ├── service/
+    │   └── ListingService.java            # [+searchListings, +getListingDtoById]
+    └── controller/
+        └── ListingController.java         # [Cập nhật GET /api/v1/listings phân trang & lọc]
+```
+
+### 3. Bàn giao cho ai
+- **TV2 (Frontend Developer):**
+  - Endpoint chính thức: `GET /api/v1/listings`
+  - Các tham số query: `brand`, `model`, `minPrice`, `maxPrice`, `minYear`, `maxYear`, `minMileage`, `maxMileage`, `fuelType`, `transmission`, `bodyType`, `location`, `keyword`, `page`, `size`, `sort`.
+  - Định dạng JSON trả về dạng phẳng, đã có sẵn cả `manufacture_year`, `image_url` khớp 100% với component `VehicleCard` và `VehicleInfo`.
+
+### 4. Test thử
+```powwershell
+cd backend
+.\mvnw.cmd spring-boot:run
+```
+**Chạy thành công, sau đó vào mở đường dẫn sau:**
+http://localhost:8080/swagger-ui.html
