@@ -2,12 +2,13 @@ package com.system.repository;
 
 import com.system.entity.Listing;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
-public interface ListingRepository extends JpaRepository<Listing, Long> {
+public interface ListingRepository extends JpaRepository<Listing, Long>, JpaSpecificationExecutor<Listing> {
 
     // Tìm tất cả tin đăng theo ID dòng xe (Vehicle ID)
     List<Listing> findByVehicleId(Long vehicleId);

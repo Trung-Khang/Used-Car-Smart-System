@@ -1,9 +1,16 @@
 package com.system.service;
 
+import com.system.dto.ListingFilterRequest;
+import com.system.dto.ListingResponseDto;
+import com.system.dto.PageResponse;
 import com.system.entity.Listing;
 import com.system.exception.ResourceNotFoundException;
 import com.system.repository.ListingRepository;
 import com.system.repository.VehicleRepository;
+import com.system.specification.ListingSpecification;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,7 +26,26 @@ public class ListingService {
         this.vehicleRepository = vehicleRepository;
     }
 
-    // 1. Lấy toàn bộ danh sách tin đăng rao bán xe
+    /**
+     * Tìm kiếm và lọc tin đăng xe đa tiêu chí, hỗ trợ phân trang và sắp xếp.
+     * Trả về kết quả phân trang ở dạng DTO phẳng cho Frontend.
+     */
+    public PageResponse<ListingResponseDto> searchListings(ListingFilterRequest filter, Pageable pageable) {
+        Specification<Listing> spec = ListingSpecification.filterBy(filter);
+        Page<Listing> pageResult = listingRepository.findAll(spec, pageable);
+        Page<ListingResponseDto> dtoPage = pageResult.map(ListingResponseDto::fromEntity);
+        return PageResponse.fromPage(dtoPage);
+    }
+
+    /**
+     * Lấy chi tiết một tin đăng dưới dạng DTO phẳng kèm thông số dòng xe và nguồn.
+     */
+    public ListingResponseDto getListingDtoById(Long id) {
+        Listing listing = getListingById(id);
+        return ListingResponseDto.fromEntity(listing);
+    }
+
+    // 1. Lấy toàn bộ danh sách tin đăng rao bán xe (Legacy)
     public List<Listing> getAllListings() {
         return listingRepository.findAll();
     }
